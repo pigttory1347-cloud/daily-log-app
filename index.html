@@ -35,16 +35,18 @@ html[data-theme=mono]{ --bg:#E9E7E4; --accent:#878D89; --btn-bg:#878D89;
 
 /* 다크모드에서도 항상 파스텔 바탕 유지 (사용자 선택) */
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
-html,body{margin:0; padding:0; height:100%; overflow:hidden;
+html,body{margin:0; padding:0; overflow:hidden;
   background:var(--bg); color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
   font-size:16px; -webkit-text-size-adjust:100%}
 /* 고정 레이아웃: 페이지는 안 움직이고 main 내부만 스크롤 → iOS 키보드 밀림 방지 */
-/* iOS 단독실행 버그: 뷰포트 아래 영역을 iOS가 body 배경색으로 칠함.
-   body를 화면 배경색과 같게 두고 탭바도 같은 색으로 → 경계가 안 보임 */
-html{background:var(--bg)}
-body{position:fixed; inset:0; display:flex; flex-direction:column;
-  background:var(--bg)}
+/* iOS 단독실행(viewport-fit=cover+black-translucent)에서 height:100%와 inset:0은
+   하단 safe area를 뺀 뷰포트 기준으로 계산되어 데드존이 생김(WebKit 254868/237961).
+   100vh만 콜드 스타트부터 화면 전체 높이를 반환하므로 body 크기는 100vh로 잡는다.
+   배경색 마스킹(html/body = --bg)은 안 먹는 iOS 버전 대비 안전망으로 유지 */
+html{height:100%; background:var(--bg)}
+body{position:fixed; top:0; left:0; width:100vw; height:100vh;
+  display:flex; flex-direction:column; background:var(--bg)}
 header{flex:none; background:var(--bg);
   padding:calc(12px + env(safe-area-inset-top)) 18px 10px;
   display:flex; align-items:center; justify-content:space-between}
@@ -112,7 +114,7 @@ textarea{min-height:90px; resize:vertical}
 nav{flex:none; display:flex; gap:4px; background:var(--card);
   border-radius:999px; border:1px solid var(--line);
   box-shadow:0 4px 14px rgba(47,90,70,.14);
-  margin:8px 16px calc(12px + max(0px, env(safe-area-inset-bottom) - var(--dead, 0px)));
+  margin:8px 16px calc(12px + env(safe-area-inset-bottom));
   padding:6px 8px; z-index:20}
 nav button{flex:1; background:none; border:none; padding:7px 0 5px; color:var(--sub);
   font-size:11px; font-weight:600; display:flex; flex-direction:column; align-items:center;
@@ -142,7 +144,7 @@ body.kb nav{display:none}
 .sheet-bg.show{display:block}
 .sheet{position:fixed; left:0; right:0; bottom:0; background:var(--card); z-index:31;
   border-radius:22px 22px 0 0;
-  padding:20px 18px calc(20px + max(0px, env(safe-area-inset-bottom) - var(--dead, 0px)));
+  padding:20px 18px calc(20px + env(safe-area-inset-bottom));
   transform:translateY(100%); transition:transform .25s; max-height:80vh; overflow-y:auto}
 .sheet.show{transform:translateY(0)}
 .sheet h2{margin:0 0 4px; font-size:18px}
@@ -285,7 +287,7 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v21</div>
+  <div class="caption" style="text-align:center">앱 버전 v22</div>
 </div>
 
 <div class="lightbox" id="lightbox"><img alt=""></div>
@@ -525,7 +527,8 @@ function renderThemeRow(){
 
 /* ===================== iOS 죽은 영역(--dead) 측정 ===================== */
 /* 단독실행 iOS에서 화면(screen.height)보다 뷰포트(innerHeight)가 짧으면 그 차이.
-   탭바를 아래로 더 붙이는 데 사용 */
+   v22부터 레이아웃은 100vh 기준이라 보정에는 안 쓰고 진단용으로만 유지.
+   콜드 스타트 직후 뷰포트 값이 늦게 잡히는 버그 대비, 크기 변화 때마다 재측정 */
 function _setDead(){
   let dead = 0;
   if(navigator.standalone && screen && screen.height > window.innerHeight){
@@ -535,6 +538,8 @@ function _setDead(){
 }
 _setDead();
 window.addEventListener("orientationchange", () => setTimeout(_setDead, 300));
+window.addEventListener("pageshow", () => setTimeout(_setDead, 100));
+if(window.visualViewport) window.visualViewport.addEventListener("resize", _setDead);
 
 /* ===================== 키보드 ↔ 하단 탭바 ===================== */
 /* 키보드가 화면을 줄이면(visualViewport) 탭바를 숨김 — 포커스 이벤트보다 확실함 */
