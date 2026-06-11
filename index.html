@@ -35,11 +35,13 @@ html[data-theme=mono]{ --bg:#E9E7E4; --accent:#878D89; --btn-bg:#878D89;
 
 /* 다크모드에서도 항상 파스텔 바탕 유지 (사용자 선택) */
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
-html,body{margin:0; padding:0; background:var(--bg); color:var(--text);
+html,body{margin:0; padding:0; height:100%; overflow:hidden;
+  background:var(--bg); color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
   font-size:16px; -webkit-text-size-adjust:100%}
-body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
-header{position:sticky; top:0; z-index:10; background:var(--bg);
+/* 고정 레이아웃: 페이지는 안 움직이고 main 내부만 스크롤 → iOS 키보드 밀림 방지 */
+body{display:flex; flex-direction:column}
+header{flex:none; background:var(--bg);
   padding:calc(12px + env(safe-area-inset-top)) 18px 10px;
   display:flex; align-items:center; justify-content:space-between}
 .htitle{display:flex; align-items:center; gap:10px}
@@ -47,7 +49,8 @@ header{position:sticky; top:0; z-index:10; background:var(--bg);
 header h1{font-size:20px; margin:0; font-weight:800}
 header>button{background:var(--card); border:none; width:38px; height:38px;
   border-radius:50%; font-size:17px; color:var(--accent); box-shadow:var(--shadow)}
-main{padding:2px 16px 0}
+main{flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch;
+  padding:2px 16px 28px}
 .card{background:var(--card); border-radius:20px; padding:16px; margin-bottom:12px;
   border:none; box-shadow:var(--shadow)}
 .chips{display:flex; gap:7px; overflow-x:auto; padding:2px 0 12px; -webkit-overflow-scrolling:touch}
@@ -101,7 +104,7 @@ textarea{min-height:90px; resize:vertical}
 .diary-item .diary-body{background:var(--card); border-top:1.5px dashed var(--line);
   border-radius:0 0 16px 16px; padding:13px 16px; white-space:pre-wrap; font-size:15px;
   box-shadow:var(--shadow)}
-nav{position:fixed; bottom:0; left:0; right:0; display:flex; gap:4px; background:var(--card);
+nav{flex:none; display:flex; gap:4px; background:var(--card);
   border-radius:22px 22px 0 0; box-shadow:0 -4px 16px rgba(47,90,70,.12);
   padding:7px 10px calc(7px + env(safe-area-inset-bottom)); z-index:20}
 nav button{flex:1; background:none; border:none; padding:8px 0 6px; color:var(--sub);
@@ -111,7 +114,6 @@ nav button svg{width:23px; height:23px}
 nav button.on{color:var(--accent); background:var(--chip)}
 /* 키보드가 올라오면 하단 탭바 숨김 (iOS에서 키보드 위로 떠오르는 문제) */
 body.kb nav{display:none}
-body.kb{padding-bottom:12px}
 .themes{display:flex; gap:12px; padding:6px 2px 2px}
 .theme-dot{width:40px; height:40px; border-radius:50%; border:3px solid transparent; padding:0}
 .theme-dot.on{border-color:var(--text)}
@@ -516,10 +518,20 @@ const _vv = window.visualViewport;
 function _kbOpen(){
   return _vv ? (_vv.height < window.innerHeight - 120) : false;
 }
-if(_vv){
-  _vv.addEventListener("resize", () =>
-    document.body.classList.toggle("kb", _kbOpen()));
+function _restorePan(){
+  // iOS가 키보드 때문에 화면을 밀어올린 걸 원위치
+  if(window.scrollY !== 0) window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
 }
+if(_vv){
+  _vv.addEventListener("resize", () => {
+    const open = _kbOpen();
+    document.body.classList.toggle("kb", open);
+    if(!open) setTimeout(_restorePan, 60);
+  });
+}
+// 문서 자체는 스크롤될 일이 없으므로, 키보드가 닫혀 있는데 밀려 있으면 즉시 복원
+window.addEventListener("scroll", () => { if(!_kbOpen()) _restorePan(); });
 document.addEventListener("focusin", e => {
   if(e.target.matches("input, textarea, select")) document.body.classList.add("kb");
 });
@@ -528,7 +540,8 @@ document.addEventListener("focusout", () => {
     if(_kbOpen()) return;
     if(!document.activeElement || !document.activeElement.matches("input, textarea, select"))
       document.body.classList.remove("kb");
-  }, 50);
+    _restorePan();
+  }, 80);
 });
 
 /* ===================== 토스트 ===================== */
@@ -692,7 +705,7 @@ document.querySelectorAll("nav button").forEach(btn => {
     document.querySelectorAll("main section").forEach(s => s.classList.remove("on"));
     document.getElementById("sec-" + tab).classList.add("on");
     document.getElementById("page-title").textContent = TITLES[tab];
-    window.scrollTo(0, 0);
+    document.querySelector("main").scrollTo(0, 0);
   });
 });
 
