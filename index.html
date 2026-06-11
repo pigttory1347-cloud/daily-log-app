@@ -40,10 +40,9 @@ html,body{margin:0; padding:0; height:100%; overflow:hidden;
   font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
   font-size:16px; -webkit-text-size-adjust:100%}
 /* 고정 레이아웃: 페이지는 안 움직이고 main 내부만 스크롤 → iOS 키보드 밀림 방지 */
-/* body를 화면에 직접 고정 — iOS 단독실행 모드에서 100% 높이가 짧게 잡히는 문제 회피
-   100vh = "가장 큰 뷰포트" 기준이라 단독실행에서 실제 화면 전체 높이에 가장 가까움 */
-body{position:fixed; top:0; left:0; right:0; height:100vh;
-  display:flex; flex-direction:column}
+/* 모든 콘텐츠는 보이는 뷰포트 안에. 뷰포트 아래 "죽은 영역"(iOS 단독실행 버그)은
+   탭바·시트의 배경색만 그림자 기법으로 연장해서 가림 — 글자·터치는 그 영역에서 동작 안 함 */
+body{position:fixed; inset:0; display:flex; flex-direction:column}
 header{flex:none; background:var(--bg);
   padding:calc(12px + env(safe-area-inset-top)) 18px 10px;
   display:flex; align-items:center; justify-content:space-between}
@@ -108,7 +107,8 @@ textarea{min-height:90px; resize:vertical}
   border-radius:0 0 16px 16px; padding:13px 16px; white-space:pre-wrap; font-size:15px;
   box-shadow:var(--shadow)}
 nav{flex:none; display:flex; gap:4px; background:var(--card);
-  border-radius:22px 22px 0 0; box-shadow:0 -4px 16px rgba(47,90,70,.12);
+  border-radius:22px 22px 0 0;
+  box-shadow:0 -4px 16px rgba(47,90,70,.12), 0 90px 0 0 var(--card);
   padding:7px 10px calc(7px + env(safe-area-inset-bottom)); z-index:20}
 nav button{flex:1; background:none; border:none; padding:8px 0 6px; color:var(--sub);
   font-size:11px; font-weight:600; display:flex; flex-direction:column; align-items:center;
@@ -130,14 +130,15 @@ body.kb nav{display:none}
 .btn.small{padding:10px; font-size:14px; margin-top:8px}
 .rec-photos{display:flex; flex-wrap:wrap; gap:6px; margin-top:7px}
 .rec-photos img{width:74px; height:74px; object-fit:cover; border-radius:10px; background:var(--field)}
-.lightbox{position:absolute; inset:0; background:rgba(0,0,0,.88); display:none;
+.lightbox{position:fixed; inset:0; background:rgba(0,0,0,.88); display:none;
+  box-shadow:0 90px 0 0 rgba(0,0,0,.88);
   align-items:center; justify-content:center; z-index:60}
 .lightbox.show{display:flex}
 .lightbox img{max-width:94vw; max-height:88vh; border-radius:14px}
-/* 떠 있는 요소들은 body(실제 화면 전체 높이) 기준으로 배치 — iOS 뷰포트 759px 버그 회피 */
-.sheet-bg{position:absolute; inset:0; background:rgba(20,40,30,.45); z-index:30; display:none}
+.sheet-bg{position:fixed; inset:0; background:rgba(20,40,30,.45); z-index:30; display:none}
 .sheet-bg.show{display:block}
-.sheet{position:absolute; left:0; right:0; bottom:0; background:var(--card); z-index:31;
+.sheet{position:fixed; left:0; right:0; bottom:0; background:var(--card); z-index:31;
+  box-shadow:0 90px 0 0 var(--card);
   border-radius:22px 22px 0 0; padding:20px 18px calc(22px + env(safe-area-inset-bottom));
   transform:translateY(100%); transition:transform .25s; max-height:80vh; overflow-y:auto}
 .sheet.show{transform:translateY(0)}
@@ -145,7 +146,7 @@ body.kb nav{display:none}
 h3{font-size:17px; margin:20px 4px 10px; font-weight:800}
 section{display:none}
 section.on{display:block}
-.toast{position:absolute; left:50%; bottom:calc(92px + env(safe-area-inset-bottom));
+.toast{position:fixed; left:50%; bottom:calc(92px + env(safe-area-inset-bottom));
   transform:translateX(-50%) translateY(8px); background:var(--text); color:var(--card);
   padding:11px 20px; border-radius:22px; font-size:14px; font-weight:600;
   opacity:0; transition:.25s; z-index:50; pointer-events:none; white-space:nowrap}
@@ -281,7 +282,7 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v14</div>
+  <div class="caption" style="text-align:center">앱 버전 v15</div>
   <div class="caption" id="diag" style="text-align:center"></div>
 </div>
 
