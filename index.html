@@ -208,6 +208,7 @@ section.on{display:block}
       <input type="file" id="f-photo-input" accept="image/*" multiple style="display:none">
 
       <button class="btn" id="f-save">저장</button>
+      <button class="btn secondary small" id="f-cancel-edit" style="display:none">수정 취소</button>
     </div>
 
     <h3>저장된 기록</h3>
@@ -276,7 +277,7 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v7</div>
+  <div class="caption" style="text-align:center">앱 버전 v8</div>
 </div>
 
 <div class="lightbox" id="lightbox"><img alt=""></div>
@@ -759,6 +760,43 @@ function renderStars(){
   }
 }
 
+/* ---- 기록 수정 모드 ---- */
+let editingId = null;
+function setEditMode(on){
+  document.getElementById("f-save").textContent = on ? "수정 저장" : "저장";
+  document.getElementById("f-cancel-edit").style.display = on ? "" : "none";
+}
+function clearRecordForm(){
+  ["f-url","f-title","f-creator","f-link","f-memo"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("f-ep").value = 1;
+  curRating = 0; renderStars();
+  recPhotos.reset([]);
+  document.getElementById("f-url-hint").textContent = "붙여넣으면 썸네일은 자동, 제목은 인터넷 연결 시 자동으로 채워져요.";
+}
+function startEditRecord(id){
+  const r = DB.records.find(x => x.id === id);
+  if(!r) return;
+  editingId = id;
+  curKind = KINDS[r.kind] ? r.kind : "etc";
+  renderKindChips(); applyKindForm();
+  document.getElementById("f-title").value = r.title || "";
+  document.getElementById("f-creator").value = r.creator || "";
+  document.getElementById("f-url").value = r.kind === "youtube" ? (r.url || "") : "";
+  document.getElementById("f-link").value = (r.kind !== "youtube" && r.kind !== "drama") ? (r.url || "") : "";
+  const ep = parseInt(r.detail, 10);
+  document.getElementById("f-ep").value = isNaN(ep) ? 1 : ep;
+  if(r.date) document.getElementById("f-date").value = r.date;
+  curRating = r.rating || 0; renderStars();
+  document.getElementById("f-memo").value = r.memo || "";
+  recPhotos.reset(r.photos || []);
+  setEditMode(true);
+  document.querySelector("main").scrollTo({top: 0, behavior: "smooth"});
+  toast("수정 중 — 고치고 '수정 저장'을 누르세요");
+}
+document.getElementById("f-cancel-edit").addEventListener("click", () => {
+  editingId = null; setEditMode(false); clearRecordForm();
+});
+
 let ytFetchTimer = null;
 document.getElementById("f-url").addEventListener("input", e => {
   const url = e.target.value.trim();
@@ -785,9 +823,7 @@ document.getElementById("f-save").addEventListener("click", async () => {
   if(curKind !== "youtube" && !title){ alert("제목을 입력해 주세요."); return; }
 
   const photoIds = await recPhotos.commit();
-  const rec = {
-    photos: photoIds,
-    id: Date.now() + "-" + Math.random().toString(36).slice(2, 7),
+  const fields = {
     kind: curKind,
     title: title || "(제목 없음)",
     creator: document.getElementById("f-creator").value.trim() || null,
@@ -797,18 +833,26 @@ document.getElementById("f-save").addEventListener("click", async () => {
     rating: curRating || null,
     date: document.getElementById("f-date").value || todayStr(),
     memo: document.getElementById("f-memo").value.trim() || null,
-    createdAt: Date.now(),
+    photos: photoIds,
   };
-  DB.records.push(rec);
+  if(editingId){
+    const i = DB.records.findIndex(r => r.id === editingId);
+    if(i >= 0){
+      imgDel((DB.records[i].photos || []).filter(pid => !photoIds.includes(pid)));
+      DB.records[i] = Object.assign({}, DB.records[i], fields);
+    }
+    editingId = null; setEditMode(false);
+    toast("수정했어요! 🐢");
+  }else{
+    DB.records.push(Object.assign({
+      id: Date.now() + "-" + Math.random().toString(36).slice(2, 7),
+      createdAt: Date.now(),
+    }, fields));
+    toast("저장했어요! 🐢");
+  }
   save();
-  // 폼 초기화 (날짜·종류는 유지)
-  ["f-url","f-title","f-creator","f-link","f-memo"].forEach(id => document.getElementById(id).value = "");
-  document.getElementById("f-ep").value = 1;
-  curRating = 0; renderStars();
-  recPhotos.reset([]);
-  document.getElementById("f-url-hint").textContent = "붙여넣으면 썸네일은 자동, 제목은 인터넷 연결 시 자동으로 채워져요.";
+  clearRecordForm();
   renderRecordList();
-  toast("저장했어요! 🐢");
 });
 
 /* ===================== UI: 기록 목록 ===================== */
@@ -831,6 +875,7 @@ function recordCardHTML(r, deletable){
   const sub = [r.creator, "기록: " + r.date].filter(Boolean).map(esc).join(" · ");
   const thumb = r.thumbnail ? `<div class="rec-thumb"><img src="${esc(r.thumbnail)}" loading="lazy" alt=""></div>` : "";
   const link = r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">열기</a>` : "";
+  const edit = deletable ? `<button data-edit="${esc(r.id)}">수정</button>` : "";
   const del = deletable ? `<button class="del" data-del="${esc(r.id)}">삭제</button>` : "";
   return `<div class="card rec-card">
     ${thumb}
@@ -840,7 +885,7 @@ function recordCardHTML(r, deletable){
       <div class="rec-sub">${sub}</div>
       ${r.memo ? `<div class="rec-memo">${esc(r.memo)}</div>` : ""}
       ${(r.photos && r.photos.length) ? `<div class="rec-photos">${r.photos.map(id => `<img data-pid="${esc(id)}" alt="">`).join("")}</div>` : ""}
-      ${(link || del) ? `<div class="rec-actions">${link}${del}</div>` : ""}
+      ${(link || edit || del) ? `<div class="rec-actions">${link}${edit}${del}</div>` : ""}
     </div>
   </div>`;
 }
@@ -855,6 +900,8 @@ function renderRecordList(){
   hydratePhotos(el);
 }
 document.getElementById("record-list").addEventListener("click", e => {
+  const eid = e.target.dataset && e.target.dataset.edit;
+  if(eid){ startEditRecord(eid); return; }
   const id = e.target.dataset && e.target.dataset.del;
   if(id && confirm("이 기록을 삭제할까요?")){
     const rec = DB.records.find(r => r.id === id);
