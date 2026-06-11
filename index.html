@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>일상 기록</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="일상 기록">
+<meta name="theme-color" content="#1c1c1e" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<style>
+:root{
+  --bg:#f2f2f7; --card:#ffffff; --text:#1c1c1e; --sub:#6e6e73;
+  --accent:#0a84ff; --line:#e3e3e8; --chip:#e9e9ee; --danger:#ff3b30;
+  --star:#ff9f0a;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#000000; --card:#1c1c1e; --text:#f2f2f7; --sub:#98989f;
+    --accent:#0a84ff; --line:#2c2c2e; --chip:#2c2c2e; --danger:#ff453a;
+  }
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0; padding:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+  font-size:16px; -webkit-text-size-adjust:100%}
+body{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+header{position:sticky; top:0; z-index:10; background:var(--bg);
+  padding:calc(10px + env(safe-area-inset-top)) 16px 8px;
+  display:flex; align-items:center; justify-content:space-between}
+header h1{font-size:22px; margin:0; font-weight:700}
+header button{background:none; border:none; font-size:20px; color:var(--accent); padding:4px}
+main{padding:0 14px}
+.card{background:var(--card); border-radius:14px; padding:14px; margin-bottom:12px;
+  border:1px solid var(--line)}
+.chips{display:flex; gap:6px; overflow-x:auto; padding:2px 0 10px; -webkit-overflow-scrolling:touch}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto; padding:7px 14px; border-radius:18px; background:var(--chip);
+  border:none; font-size:14px; color:var(--text); white-space:nowrap}
+.chip.on{background:var(--accent); color:#fff; font-weight:600}
+label{display:block; font-size:13px; color:var(--sub); margin:10px 0 4px}
+input[type=text],input[type=url],input[type=date],input[type=number],textarea,select{
+  width:100%; padding:11px 12px; border-radius:10px; border:1px solid var(--line);
+  background:var(--bg); color:var(--text); font-size:16px; font-family:inherit}
+textarea{min-height:90px; resize:vertical}
+.btn{display:block; width:100%; padding:13px; border-radius:12px; border:none;
+  background:var(--accent); color:#fff; font-size:16px; font-weight:600; margin-top:14px}
+.btn.secondary{background:var(--chip); color:var(--text)}
+.btn.danger{background:transparent; color:var(--danger); border:1px solid var(--line)}
+.btn:active{opacity:.7}
+.row2{display:flex; gap:10px}
+.row2>div{flex:1}
+.stars{display:flex; gap:4px; padding:4px 0}
+.stars button{background:none; border:none; font-size:30px; color:var(--line); padding:0 2px}
+.stars button.on{color:var(--star)}
+.rec-card{display:flex; gap:12px}
+.rec-thumb{flex:0 0 92px}
+.rec-thumb img{width:92px; height:64px; object-fit:cover; border-radius:8px}
+.rec-body{flex:1; min-width:0}
+.rec-kind{font-size:12px; color:var(--accent); font-weight:600}
+.rec-title{font-weight:600; margin:2px 0; word-break:break-all}
+.rec-star{color:var(--star); font-size:14px}
+.rec-sub{font-size:13px; color:var(--sub); margin:2px 0}
+.rec-memo{font-size:14px; margin:6px 0 0; white-space:pre-wrap; word-break:break-all}
+.rec-actions{display:flex; gap:14px; margin-top:8px; font-size:14px}
+.rec-actions a,.rec-actions button{color:var(--accent); background:none; border:none;
+  font-size:14px; padding:0; text-decoration:none}
+.rec-actions button.del{color:var(--danger)}
+.empty{text-align:center; color:var(--sub); padding:34px 0; font-size:15px}
+.caption{font-size:13px; color:var(--sub); margin:6px 2px 12px}
+.diary-item{margin-bottom:10px}
+.diary-item summary{font-weight:600; padding:12px 14px; background:var(--card);
+  border:1px solid var(--line); border-radius:12px; list-style:none}
+.diary-item summary::-webkit-details-marker{display:none}
+.diary-item[open] summary{border-radius:12px 12px 0 0}
+.diary-item .diary-body{background:var(--card); border:1px solid var(--line); border-top:none;
+  border-radius:0 0 12px 12px; padding:12px 14px; white-space:pre-wrap; font-size:15px}
+nav{position:fixed; bottom:0; left:0; right:0; display:flex; background:var(--card);
+  border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom); z-index:20}
+nav button{flex:1; background:none; border:none; padding:9px 0 7px; color:var(--sub);
+  font-size:11px; display:flex; flex-direction:column; align-items:center; gap:2px}
+nav button .ico{font-size:22px; line-height:1}
+nav button.on{color:var(--accent)}
+.sheet-bg{position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:30; display:none}
+.sheet-bg.show{display:block}
+.sheet{position:fixed; left:0; right:0; bottom:0; background:var(--card); z-index:31;
+  border-radius:16px 16px 0 0; padding:18px 16px calc(20px + env(safe-area-inset-bottom));
+  transform:translateY(100%); transition:transform .25s; max-height:80vh; overflow-y:auto}
+.sheet.show{transform:translateY(0)}
+.sheet h2{margin:0 0 4px; font-size:18px}
+h3{font-size:17px; margin:18px 2px 10px}
+section{display:none}
+section.on{display:block}
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="page-title">기록</h1>
+  <button id="data-btn" aria-label="데이터 관리">⚙︎</button>
+</header>
+
+<main>
+  <!-- ===================== 기록 ===================== -->
+  <section id="sec-records" class="on">
+    <div class="card">
+      <div class="chips" id="kind-chips"></div>
+
+      <div id="f-url-wrap" style="display:none">
+        <label>YouTube URL</label>
+        <input type="url" id="f-url" placeholder="https://youtu.be/..." inputmode="url">
+        <div class="caption" id="f-url-hint">붙여넣으면 썸네일은 자동, 제목은 인터넷 연결 시 자동으로 채워져요.</div>
+      </div>
+
+      <label id="f-title-label">제목</label>
+      <input type="text" id="f-title" placeholder="제목">
+
+      <div id="f-creator-wrap">
+        <label id="f-creator-label">만든이</label>
+        <input type="text" id="f-creator" placeholder="">
+      </div>
+
+      <div id="f-ep-wrap" style="display:none">
+        <label>회차</label>
+        <input type="number" id="f-ep" min="1" max="999" value="1" inputmode="numeric">
+      </div>
+
+      <div id="f-link-wrap" style="display:none">
+        <label>링크 (선택)</label>
+        <input type="url" id="f-link" placeholder="관련 URL이 있다면" inputmode="url">
+      </div>
+
+      <div class="row2">
+        <div>
+          <label>날짜</label>
+          <input type="date" id="f-date">
+        </div>
+        <div>
+          <label>별점</label>
+          <div class="stars" id="f-stars"></div>
+        </div>
+      </div>
+
+      <label>감상 / 메모</label>
+      <textarea id="f-memo" placeholder="뭐가 재밌었고 뭐가 감명깊었는지"></textarea>
+
+      <button class="btn" id="f-save">저장</button>
+    </div>
+
+    <h3>저장된 기록</h3>
+    <div class="chips" id="filter-chips"></div>
+    <div id="record-list"></div>
+  </section>
+
+  <!-- ===================== 일기 ===================== -->
+  <section id="sec-diary">
+    <div class="card">
+      <label>날짜</label>
+      <input type="date" id="d-date">
+      <label>오늘 하루</label>
+      <textarea id="d-content" style="min-height:160px"
+        placeholder="오늘 뭐 했고, 뭐가 좋았고, 뭐가 아쉬웠는지..."></textarea>
+      <button class="btn" id="d-save">저장</button>
+      <button class="btn danger" id="d-del" style="display:none">이 날짜 일기 삭제</button>
+    </div>
+    <h3>지난 일기</h3>
+    <div id="diary-list"></div>
+  </section>
+
+  <!-- ===================== 검색 ===================== -->
+  <section id="sec-search">
+    <div class="card">
+      <input type="text" id="s-q" placeholder="지난주에 본 거 / 별 5개짜리 영화 / 어제 일기"
+        autocomplete="off">
+      <button class="btn" id="s-go">검색</button>
+    </div>
+    <div class="caption" id="s-explain"></div>
+    <div id="s-results"></div>
+  </section>
+</main>
+
+<nav>
+  <button data-tab="records" class="on"><span class="ico">✎</span>기록</button>
+  <button data-tab="diary"><span class="ico">☼</span>일기</button>
+  <button data-tab="search"><span class="ico">⌕</span>검색</button>
+</nav>
+
+<!-- 데이터 관리 시트 -->
+<div class="sheet-bg" id="sheet-bg"></div>
+<div class="sheet" id="data-sheet">
+  <h2>데이터 관리</h2>
+  <div class="caption" id="data-stats"></div>
+  <button class="btn" id="exp-btn">내보내기 (JSON 백업)</button>
+  <button class="btn secondary" id="imp-btn">가져오기 (JSON)</button>
+  <input type="file" id="imp-file" accept=".json,application/json" style="display:none">
+  <div class="caption" style="margin-top:14px">
+    모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
+    가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ===================== 저장소 ===================== */
+const LS_KEY = "dailylog_v1";
+
+function load(){
+  try{
+    const d = JSON.parse(localStorage.getItem(LS_KEY));
+    if(d && Array.isArray(d.records) && typeof d.diary === "object") return d;
+  }catch(e){}
+  return {records:[], diary:{}};
+}
+let DB = load();
+function save(){ localStorage.setItem(LS_KEY, JSON.stringify(DB)); }
+
+if(navigator.storage && navigator.storage.persist){ navigator.storage.persist(); }
+
+/* ===================== 상수 ===================== */
+const KINDS = {youtube:"유튜브", drama:"드라마", movie:"영화", book:"책", paper:"논문", etc:"기타"};
+const CREATOR_LABELS = {youtube:"채널", drama:"방송사/플랫폼", movie:"감독", book:"저자", paper:"저자/학회", etc:"만든이"};
+const STAR = n => "★".repeat(n);
+const todayStr = () => {
+  const t = new Date();
+  return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")}`;
+};
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const WEEKDAYS = "월화수목금토일";
+const weekdayOf = ds => WEEKDAYS[(new Date(ds+"T00:00:00").getDay()+6)%7];
+
+/* ===================== NL-PARSER-START ===================== */
+function _fmt(d){
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function _addDays(d, n){ const x = new Date(d); x.setDate(x.getDate()+n); return x; }
+function _weekRange(base, weeksAgo){
+  const dow = (base.getDay()+6)%7; // 월=0
+  const mon = _addDays(base, -dow - 7*weeksAgo);
+  return [mon, _addDays(mon, 6)];
+}
+function _monthRange(y, m){ // m: 1~12
+  const first = new Date(y, m-1, 1);
+  const last = new Date(y, m, 0);
+  return [first, last];
+}
+function _prevMonth(y, m, back){
+  let mm = m - back, yy = y;
+  while(mm < 1){ mm += 12; yy -= 1; }
+  return [yy, mm];
+}
+
+function parseQuery(q, today){
+  today = today || new Date();
+  let text = (q||"").trim();
+  let start = null, end = null, kind = null, rating = null;
+  const explain = [];
+
+  const datePatterns = [
+    [/그저께|그제/, () => [_addDays(today,-2), _addDays(today,-2)]],
+    [/어제/, () => [_addDays(today,-1), _addDays(today,-1)]],
+    [/오늘/, () => [today, today]],
+    [/지지난\s*주/, () => _weekRange(today, 2)],
+    [/(지난|저번)\s*주/, () => _weekRange(today, 1)],
+    [/이번\s*주/, () => [_weekRange(today,0)[0], today]],
+    [/지지난\s*달/, () => { const [y,m]=_prevMonth(today.getFullYear(),today.getMonth()+1,2); return _monthRange(y,m); }],
+    [/(지난|저번)\s*달/, () => { const [y,m]=_prevMonth(today.getFullYear(),today.getMonth()+1,1); return _monthRange(y,m); }],
+    [/이번\s*달/, () => [new Date(today.getFullYear(), today.getMonth(), 1), today]],
+    [/올해/, () => [new Date(today.getFullYear(),0,1), today]],
+    [/작년/, () => [new Date(today.getFullYear()-1,0,1), new Date(today.getFullYear()-1,11,31)]],
+    [/최근\s*(\d+)\s*일/, m => [_addDays(today,-+m[1]), today]],
+    [/최근\s*(\d+)\s*주/, m => [_addDays(today,-7*+m[1]), today]],
+    [/최근\s*(\d+)\s*(?:달|개월)/, m => [_addDays(today,-30*+m[1]), today]],
+    [/(\d+)\s*일\s*전/, m => [_addDays(today,-+m[1]), _addDays(today,-+m[1])]],
+    [/(\d+)\s*주\s*전/, m => _weekRange(today, +m[1])],
+    [/(\d{4})\s*년\s*(\d{1,2})\s*월/, m => _monthRange(+m[1], +m[2])],
+    [/(\d{4})\s*년/, m => [new Date(+m[1],0,1), new Date(+m[1],11,31)]],
+    [/(\d{1,2})\s*월(?!\s*\d)/, m => {
+      const mo = +m[1];
+      const y = mo <= today.getMonth()+1 ? today.getFullYear() : today.getFullYear()-1;
+      return _monthRange(y, mo);
+    }],
+  ];
+  for(const [re, fn] of datePatterns){
+    const m = text.match(re);
+    if(m){
+      [start, end] = fn(m);
+      text = text.slice(0, m.index) + " " + text.slice(m.index + m[0].length);
+      explain.push(`기간 ${_fmt(start)} ~ ${_fmt(end)}`);
+      break;
+    }
+  }
+
+  const ratingPatterns = [/별점?\s*(\d)\s*개?(?:짜리)?/, /(\d)\s*점(?:짜리)?(?:\s*이상)?/];
+  for(const re of ratingPatterns){
+    const m = text.match(re);
+    if(m){
+      const r = +m[1];
+      if(r >= 1 && r <= 5){
+        rating = r;
+        text = text.slice(0, m.index) + " " + text.slice(m.index + m[0].length);
+        explain.push(`별점 ${r} 이상`);
+        break;
+      }
+    }
+  }
+
+  const kindPatterns = [
+    [/유튜브|유투브|youtube|영상/i, "youtube"],
+    [/드라마/, "drama"],
+    [/영화/, "movie"],
+    [/논문/, "paper"],
+    [/책|독서/, "book"],
+    [/일기/, "diary"],
+  ];
+  const kindLabels = {youtube:"유튜브", drama:"드라마", movie:"영화", book:"책", paper:"논문", diary:"일기"};
+  for(const [re, k] of kindPatterns){
+    const m = text.match(re);
+    if(m){
+      kind = k;
+      text = text.slice(0, m.index) + " " + text.slice(m.index + m[0].length);
+      explain.push(`${kindLabels[k]}만`);
+      break;
+    }
+  }
+
+  const STOPWORDS = new Set(["본","봤던","봤지","봤어","봤나","봤는지","봤더라","보던","보고","본거",
+    "뭐","뭘","뭐였지","뭐였더라","뭐지","뭐있지","무엇","무슨","어떤",
+    "언제","거","것","게","건","좀","내가","나","제가",
+    "알려줘","찾아줘","보여줘","검색","기록","목록","있었지","있지",
+    "했던","했지","어땠지","어땠더라","다시","그","중에","중",
+    "읽은","읽었던","읽었지","읽다가","들었던","쓴","썼던","적은",
+    "재밌게","재미있게","감명깊었던","감명","좋았던","인상깊었던"]);
+  const PARTICLES = ["이랑","에서","부터","까지","으로","은","는","이","가","을","를","에","도","만","의","랑","와","과","로"];
+
+  text = text.replace(/[?!.,~·…"'`]+/g, " ");
+  const keywords = [];
+  for(let tok of text.split(/\s+/)){
+    if(!tok) continue;
+    if(PARTICLES.includes(tok)) continue;
+    for(const p of PARTICLES.slice().sort((a,b)=>b.length-a.length)){
+      if(tok.endsWith(p) && tok.length > p.length + 1){ tok = tok.slice(0, -p.length); break; }
+    }
+    if(!tok || STOPWORDS.has(tok)) continue;
+    keywords.push(tok);
+  }
+  if(keywords.length) explain.push("키워드: " + keywords.join(", "));
+
+  return {start: start ? _fmt(start) : null, end: end ? _fmt(end) : null, kind, rating, keywords, explain};
+}
+/* ===================== NL-PARSER-END ===================== */
+
+/* ===================== 검색 ===================== */
+function searchRecords(p){
+  return DB.records.filter(r => {
+    if(p.kind && r.kind !== p.kind) return false;
+    if(p.rating && !(r.rating >= p.rating)) return false;
+    if(p.start && r.date < p.start) return false;
+    if(p.end && r.date > p.end) return false;
+    for(const kw of p.keywords){
+      const hay = [r.title, r.creator, r.memo, r.detail, r.url].map(x => x||"").join(" ").toLowerCase();
+      if(!hay.includes(kw.toLowerCase())) return false;
+    }
+    return true;
+  }).sort((a,b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
+}
+function searchDiaries(p){
+  return Object.entries(DB.diary).filter(([date, d]) => {
+    if(p.start && date < p.start) return false;
+    if(p.end && date > p.end) return false;
+    for(const kw of p.keywords){
+      if(!d.content.toLowerCase().includes(kw.toLowerCase())) return false;
+    }
+    return true;
+  }).sort((a,b) => b[0].localeCompare(a[0]));
+}
+
+/* ===================== YouTube ===================== */
+function ytVideoId(url){
+  const m = (url||"").match(/(?:youtu\.be\/|v=|shorts\/|embed\/|live\/)([\w-]{11})/);
+  return m ? m[1] : null;
+}
+function ytThumb(url){
+  const id = ytVideoId(url);
+  return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null;
+}
+async function tryFetchYtTitle(url){
+  try{
+    const r = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`, {signal: AbortSignal.timeout(6000)});
+    if(!r.ok) return null;
+    const j = await r.json();
+    return {title: j.title || "", channel: j.author_name || ""};
+  }catch(e){ return null; }
+}
+
+/* ===================== UI: 탭 ===================== */
+const TITLES = {records:"기록", diary:"일기", search:"검색"};
+document.querySelectorAll("nav button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b === btn));
+    const tab = btn.dataset.tab;
+    document.querySelectorAll("main section").forEach(s => s.classList.remove("on"));
+    document.getElementById("sec-" + tab).classList.add("on");
+    document.getElementById("page-title").textContent = TITLES[tab];
+    window.scrollTo(0, 0);
+  });
+});
+
+/* ===================== UI: 기록 입력 폼 ===================== */
+let curKind = "youtube";
+let curRating = 0;
+
+function renderKindChips(){
+  const wrap = document.getElementById("kind-chips");
+  wrap.innerHTML = "";
+  for(const [k, label] of Object.entries(KINDS)){
+    const b = document.createElement("button");
+    b.className = "chip" + (k === curKind ? " on" : "");
+    b.textContent = label;
+    b.addEventListener("click", () => { curKind = k; renderKindChips(); applyKindForm(); });
+    wrap.appendChild(b);
+  }
+}
+function applyKindForm(){
+  document.getElementById("f-url-wrap").style.display = curKind === "youtube" ? "" : "none";
+  document.getElementById("f-ep-wrap").style.display = curKind === "drama" ? "" : "none";
+  document.getElementById("f-link-wrap").style.display = (curKind === "youtube" || curKind === "drama") ? "none" : "";
+  document.getElementById("f-creator-label").textContent = CREATOR_LABELS[curKind];
+  document.getElementById("f-creator-wrap").style.display = curKind === "drama" ? "none" : "";
+  document.getElementById("f-title").placeholder = curKind === "drama" ? "드라마 제목 (예: 폭싹 속았수다)" : "제목";
+}
+function renderStars(){
+  const wrap = document.getElementById("f-stars");
+  wrap.innerHTML = "";
+  for(let i = 1; i <= 5; i++){
+    const b = document.createElement("button");
+    b.textContent = "★";
+    b.className = i <= curRating ? "on" : "";
+    b.addEventListener("click", () => { curRating = (curRating === i) ? 0 : i; renderStars(); });
+    wrap.appendChild(b);
+  }
+}
+
+let ytFetchTimer = null;
+document.getElementById("f-url").addEventListener("input", e => {
+  const url = e.target.value.trim();
+  clearTimeout(ytFetchTimer);
+  if(!ytVideoId(url)) return;
+  ytFetchTimer = setTimeout(async () => {
+    const hint = document.getElementById("f-url-hint");
+    hint.textContent = "영상 정보 가져오는 중...";
+    const meta = await tryFetchYtTitle(url);
+    if(meta){
+      if(!document.getElementById("f-title").value) document.getElementById("f-title").value = meta.title;
+      if(!document.getElementById("f-creator").value) document.getElementById("f-creator").value = meta.channel;
+      hint.textContent = "제목·채널을 자동으로 채웠어요.";
+    }else{
+      hint.textContent = "제목 자동 가져오기 실패 — 직접 입력해 주세요. (썸네일은 자동으로 저장돼요)";
+    }
+  }, 600);
+});
+
+document.getElementById("f-save").addEventListener("click", () => {
+  const title = document.getElementById("f-title").value.trim();
+  const url = document.getElementById("f-url").value.trim();
+  if(curKind === "youtube" && !title && !url){ alert("URL이나 제목을 입력해 주세요."); return; }
+  if(curKind !== "youtube" && !title){ alert("제목을 입력해 주세요."); return; }
+
+  const rec = {
+    id: Date.now() + "-" + Math.random().toString(36).slice(2, 7),
+    kind: curKind,
+    title: title || "(제목 없음)",
+    creator: document.getElementById("f-creator").value.trim() || null,
+    detail: curKind === "drama" ? (document.getElementById("f-ep").value + "화") : null,
+    url: curKind === "youtube" ? (url || null) : (document.getElementById("f-link").value.trim() || null),
+    thumbnail: curKind === "youtube" ? ytThumb(url) : null,
+    rating: curRating || null,
+    date: document.getElementById("f-date").value || todayStr(),
+    memo: document.getElementById("f-memo").value.trim() || null,
+    createdAt: Date.now(),
+  };
+  DB.records.push(rec);
+  save();
+  // 폼 초기화 (날짜·종류는 유지)
+  ["f-url","f-title","f-creator","f-link","f-memo"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("f-ep").value = 1;
+  curRating = 0; renderStars();
+  document.getElementById("f-url-hint").textContent = "붙여넣으면 썸네일은 자동, 제목은 인터넷 연결 시 자동으로 채워져요.";
+  renderRecordList();
+  alert("저장했어요!");
+});
+
+/* ===================== UI: 기록 목록 ===================== */
+let curFilter = "all";
+function renderFilterChips(){
+  const wrap = document.getElementById("filter-chips");
+  wrap.innerHTML = "";
+  const opts = Object.assign({all:"전체"}, KINDS);
+  for(const [k, label] of Object.entries(opts)){
+    const b = document.createElement("button");
+    b.className = "chip" + (k === curFilter ? " on" : "");
+    b.textContent = label;
+    b.addEventListener("click", () => { curFilter = k; renderFilterChips(); renderRecordList(); });
+    wrap.appendChild(b);
+  }
+}
+function recordCardHTML(r, deletable){
+  const star = r.rating ? ` <span class="rec-star">${STAR(r.rating)}</span>` : "";
+  const detail = r.detail ? " " + esc(r.detail) : "";
+  const sub = [r.creator, "기록: " + r.date].filter(Boolean).map(esc).join(" · ");
+  const thumb = r.thumbnail ? `<div class="rec-thumb"><img src="${esc(r.thumbnail)}" loading="lazy" alt=""></div>` : "";
+  const link = r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">열기</a>` : "";
+  const del = deletable ? `<button class="del" data-del="${esc(r.id)}">삭제</button>` : "";
+  return `<div class="card rec-card">
+    ${thumb}
+    <div class="rec-body">
+      <div class="rec-kind">${KINDS[r.kind] || esc(r.kind)}</div>
+      <div class="rec-title">${esc(r.title)}${detail}${star}</div>
+      <div class="rec-sub">${sub}</div>
+      ${r.memo ? `<div class="rec-memo">${esc(r.memo)}</div>` : ""}
+      ${(link || del) ? `<div class="rec-actions">${link}${del}</div>` : ""}
+    </div>
+  </div>`;
+}
+function renderRecordList(){
+  const rows = DB.records
+    .filter(r => curFilter === "all" || r.kind === curFilter)
+    .sort((a,b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
+  const el = document.getElementById("record-list");
+  el.innerHTML = rows.length
+    ? rows.map(r => recordCardHTML(r, true)).join("")
+    : `<div class="empty">아직 기록이 없어요.<br>위에서 추가해 보세요.</div>`;
+}
+document.getElementById("record-list").addEventListener("click", e => {
+  const id = e.target.dataset && e.target.dataset.del;
+  if(id && confirm("이 기록을 삭제할까요?")){
+    DB.records = DB.records.filter(r => r.id !== id);
+    save(); renderRecordList();
+  }
+});
+
+/* ===================== UI: 일기 ===================== */
+function loadDiaryForm(){
+  const ds = document.getElementById("d-date").value;
+  const entry = DB.diary[ds];
+  document.getElementById("d-content").value = entry ? entry.content : "";
+  document.getElementById("d-del").style.display = entry ? "" : "none";
+}
+document.getElementById("d-date").addEventListener("change", loadDiaryForm);
+document.getElementById("d-save").addEventListener("click", () => {
+  const ds = document.getElementById("d-date").value;
+  const content = document.getElementById("d-content").value.trim();
+  if(!ds){ alert("날짜를 선택해 주세요."); return; }
+  if(!content){ alert("내용을 입력해 주세요."); return; }
+  DB.diary[ds] = {content, updatedAt: Date.now()};
+  save(); loadDiaryForm(); renderDiaryList();
+  alert("일기를 저장했어요!");
+});
+document.getElementById("d-del").addEventListener("click", () => {
+  const ds = document.getElementById("d-date").value;
+  if(DB.diary[ds] && confirm("이 날짜의 일기를 삭제할까요?")){
+    delete DB.diary[ds];
+    save(); loadDiaryForm(); renderDiaryList();
+  }
+});
+function renderDiaryList(){
+  const entries = Object.entries(DB.diary).sort((a,b) => b[0].localeCompare(a[0]));
+  const el = document.getElementById("diary-list");
+  el.innerHTML = entries.length
+    ? entries.map(([ds, d]) => `<details class="diary-item">
+        <summary>${ds} (${weekdayOf(ds)})</summary>
+        <div class="diary-body">${esc(d.content)}</div>
+      </details>`).join("")
+    : `<div class="empty">아직 일기가 없어요.</div>`;
+}
+
+/* ===================== UI: 검색 ===================== */
+function runSearch(){
+  const q = document.getElementById("s-q").value.trim();
+  const exp = document.getElementById("s-explain");
+  const out = document.getElementById("s-results");
+  if(!q){ exp.textContent = ""; out.innerHTML = ""; return; }
+  const p = parseQuery(q);
+  exp.textContent = p.explain.length
+    ? "이렇게 이해했어요 → " + p.explain.join(" · ")
+    : "기간·종류 표현을 못 찾아서 전체에서 검색했어요.";
+
+  let recRows = [], diaryRows = [];
+  if(p.kind === "diary"){
+    diaryRows = searchDiaries(p);
+  }else{
+    recRows = searchRecords(p);
+    if(!p.kind && !p.rating) diaryRows = searchDiaries(p);
+  }
+  const total = recRows.length + diaryRows.length;
+  let html = `<h3>결과 — 총 ${total}건</h3>`;
+  if(total === 0){
+    html += `<div class="empty">결과가 없어요.</div>`;
+  }else{
+    html += recRows.map(r => recordCardHTML(r, false)).join("");
+    html += diaryRows.map(([ds, d]) => `<div class="card">
+      <div class="rec-kind">일기</div>
+      <div class="rec-title">${ds} (${weekdayOf(ds)})</div>
+      <div class="rec-memo">${esc(d.content)}</div>
+    </div>`).join("");
+  }
+  out.innerHTML = html;
+}
+document.getElementById("s-go").addEventListener("click", runSearch);
+document.getElementById("s-q").addEventListener("keydown", e => { if(e.key === "Enter"){ e.target.blur(); runSearch(); } });
+
+/* ===================== 데이터 관리 ===================== */
+const sheet = document.getElementById("data-sheet");
+const sheetBg = document.getElementById("sheet-bg");
+function openSheet(){
+  const n = DB.records.length, m = Object.keys(DB.diary).length;
+  document.getElementById("data-stats").textContent = `기록 ${n}건 · 일기 ${m}편 저장돼 있어요.`;
+  sheetBg.classList.add("show"); sheet.classList.add("show");
+}
+function closeSheet(){ sheetBg.classList.remove("show"); sheet.classList.remove("show"); }
+document.getElementById("data-btn").addEventListener("click", openSheet);
+sheetBg.addEventListener("click", closeSheet);
+
+document.getElementById("exp-btn").addEventListener("click", () => {
+  const payload = JSON.stringify({version:1, exportedAt:new Date().toISOString(), records:DB.records, diary:DB.diary}, null, 2);
+  const blob = new Blob([payload], {type:"application/json"});
+  const fname = `일상기록-백업-${todayStr()}.json`;
+  const file = new File([blob], fname, {type:"application/json"});
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    navigator.share({files:[file], title:fname}).catch(()=>{});
+  }else{
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = fname; a.click();
+    URL.revokeObjectURL(a.href);
+  }
+});
+
+document.getElementById("imp-btn").addEventListener("click", () => document.getElementById("imp-file").click());
+document.getElementById("imp-file").addEventListener("change", async e => {
+  const f = e.target.files[0];
+  if(!f) return;
+  try{
+    const data = JSON.parse(await f.text());
+    if(!Array.isArray(data.records) || typeof data.diary !== "object") throw new Error("형식이 달라요");
+    const merge = confirm("확인 = 기존 데이터에 합치기\n취소 = 기존 데이터를 지우고 덮어쓰기");
+    if(merge){
+      const sig = r => [r.kind, r.title, r.date, r.memo||""].join("|");
+      const seen = new Set(DB.records.map(sig));
+      let added = 0;
+      for(const r of data.records){
+        if(!seen.has(sig(r))){
+          if(!r.id) r.id = Date.now() + "-" + Math.random().toString(36).slice(2,7);
+          if(!r.createdAt) r.createdAt = Date.now();
+          DB.records.push(r); seen.add(sig(r)); added++;
+        }
+      }
+      for(const [ds, d] of Object.entries(data.diary)){
+        if(!DB.diary[ds] || (d.updatedAt||0) > (DB.diary[ds].updatedAt||0)) DB.diary[ds] = d;
+      }
+      alert(`기록 ${added}건을 합쳤어요.`);
+    }else{
+      DB = {records:data.records, diary:data.diary};
+      alert(`기록 ${data.records.length}건, 일기 ${Object.keys(data.diary).length}편으로 교체했어요.`);
+    }
+    save(); renderRecordList(); renderDiaryList(); loadDiaryForm();
+    closeSheet();
+  }catch(err){
+    alert("가져오기 실패: " + err.message);
+  }
+  e.target.value = "";
+});
+
+/* ===================== 초기화 ===================== */
+document.getElementById("f-date").value = todayStr();
+document.getElementById("d-date").value = todayStr();
+renderKindChips(); applyKindForm(); renderStars();
+renderFilterChips(); renderRecordList();
+loadDiaryForm(); renderDiaryList();
+
+if("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")){
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
+}
+</script>
+</body>
+</html>
