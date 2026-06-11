@@ -40,11 +40,11 @@ html,body{margin:0; padding:0; height:100%; overflow:hidden;
   font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
   font-size:16px; -webkit-text-size-adjust:100%}
 /* 고정 레이아웃: 페이지는 안 움직이고 main 내부만 스크롤 → iOS 키보드 밀림 방지 */
-/* iOS 단독실행 버그: 뷰포트 아래 영역을 iOS가 body 배경색/theme-color로 칠함.
-   body·html은 탭바와 같은 카드색으로, 화면 배경색은 header·main이 담당 */
-html{background:var(--card)}
+/* iOS 단독실행 버그: 뷰포트 아래 영역을 iOS가 body 배경색으로 칠함.
+   body를 화면 배경색과 같게 두고 탭바도 같은 색으로 → 경계가 안 보임 */
+html{background:var(--bg)}
 body{position:fixed; inset:0; display:flex; flex-direction:column;
-  background:var(--card)}
+  background:var(--bg)}
 header{flex:none; background:var(--bg);
   padding:calc(12px + env(safe-area-inset-top)) 18px 10px;
   display:flex; align-items:center; justify-content:space-between}
@@ -110,7 +110,9 @@ textarea{min-height:90px; resize:vertical}
   box-shadow:var(--shadow)}
 nav{flex:none; display:flex; gap:4px; background:var(--card);
   border-radius:22px 22px 0 0; box-shadow:0 -4px 16px rgba(47,90,70,.12);
-  padding:7px 10px calc(10px + env(safe-area-inset-bottom)); z-index:20}
+  /* 죽은 영역(--dead)이 있는 기기는 홈 인디케이터가 그 안에 있으므로 안전 여백에서 차감 */
+  padding:7px 10px calc(8px + max(0px, env(safe-area-inset-bottom) - var(--dead, 0px)));
+  z-index:20}
 nav button{flex:1; background:none; border:none; padding:8px 0 6px; color:var(--sub);
   font-size:11px; font-weight:600; display:flex; flex-direction:column; align-items:center;
   gap:3px; border-radius:15px}
@@ -139,7 +141,7 @@ body.kb nav{display:none}
 .sheet-bg.show{display:block}
 .sheet{position:fixed; left:0; right:0; bottom:0; background:var(--card); z-index:31;
   border-radius:22px 22px 0 0;
-  padding:20px 18px calc(22px + env(safe-area-inset-bottom));
+  padding:20px 18px calc(20px + max(0px, env(safe-area-inset-bottom) - var(--dead, 0px)));
   transform:translateY(100%); transition:transform .25s; max-height:80vh; overflow-y:auto}
 .sheet.show{transform:translateY(0)}
 .sheet h2{margin:0 0 4px; font-size:18px}
@@ -282,7 +284,7 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v19</div>
+  <div class="caption" style="text-align:center">앱 버전 v20</div>
   <div class="caption" id="diag" style="text-align:center"></div>
 </div>
 
@@ -520,6 +522,19 @@ function renderThemeRow(){
   const saved = localStorage.getItem(THEME_KEY);
   if(saved && saved !== "sage") document.documentElement.dataset.theme = saved;
 }
+
+/* ===================== iOS 죽은 영역(--dead) 측정 ===================== */
+/* 단독실행 iOS에서 화면(screen.height)보다 뷰포트(innerHeight)가 짧으면 그 차이.
+   탭바를 아래로 더 붙이는 데 사용 */
+function _setDead(){
+  let dead = 0;
+  if(navigator.standalone && screen && screen.height > window.innerHeight){
+    dead = Math.max(0, Math.min(100, screen.height - window.innerHeight));
+  }
+  document.documentElement.style.setProperty("--dead", dead + "px");
+}
+_setDead();
+window.addEventListener("orientationchange", () => setTimeout(_setDead, 300));
 
 /* ===================== 키보드 ↔ 하단 탭바 ===================== */
 /* 키보드가 화면을 줄이면(visualViewport) 탭바를 숨김 — 포커스 이벤트보다 확실함 */
