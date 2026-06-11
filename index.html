@@ -10,7 +10,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="일상 기록">
-<meta name="theme-color" content="#DCE9E1">
+<meta name="theme-color" content="#ffffff">
 <style>
 /* ---- 테마: 기본 = 세이지 (저채도 그린) ---- */
 :root{
@@ -40,11 +40,11 @@ html,body{margin:0; padding:0; height:100%; overflow:hidden;
   font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
   font-size:16px; -webkit-text-size-adjust:100%}
 /* 고정 레이아웃: 페이지는 안 움직이고 main 내부만 스크롤 → iOS 키보드 밀림 방지 */
-/* iOS 단독실행 버그: 뷰포트 아래 "죽은 영역"에는 html 바탕색만 그려짐.
-   html을 탭바와 같은 색으로 칠해서 띠가 탭바의 연장으로 보이게 함 */
+/* iOS 단독실행 버그: 뷰포트 아래 영역을 iOS가 body 배경색/theme-color로 칠함.
+   body·html은 탭바와 같은 카드색으로, 화면 배경색은 header·main이 담당 */
 html{background:var(--card)}
 body{position:fixed; inset:0; display:flex; flex-direction:column;
-  background:var(--bg)}
+  background:var(--card)}
 header{flex:none; background:var(--bg);
   padding:calc(12px + env(safe-area-inset-top)) 18px 10px;
   display:flex; align-items:center; justify-content:space-between}
@@ -54,7 +54,7 @@ header h1{font-size:20px; margin:0; font-weight:800}
 header>button{background:var(--card); border:none; width:38px; height:38px;
   border-radius:50%; font-size:17px; color:var(--accent); box-shadow:var(--shadow)}
 main{flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch;
-  padding:2px 16px 28px}
+  padding:2px 16px 28px; background:var(--bg)}
 .card{background:var(--card); border-radius:20px; padding:16px; margin-bottom:12px;
   border:none; box-shadow:var(--shadow)}
 .chips{display:flex; gap:7px; overflow-x:auto; padding:2px 0 12px; -webkit-overflow-scrolling:touch}
@@ -282,7 +282,7 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v18</div>
+  <div class="caption" style="text-align:center">앱 버전 v19</div>
   <div class="caption" id="diag" style="text-align:center"></div>
 </div>
 
@@ -492,8 +492,9 @@ const THEMES = [
 const THEME_KEY = "dailylog_theme";
 
 function syncThemeColorMeta(){
-  const bg = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim();
-  document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.content = bg);
+  // 죽은 영역(탭바 아래)이 theme-color로 칠해질 수 있어 카드색(흰색)으로 통일
+  const card = getComputedStyle(document.documentElement).getPropertyValue("--card").trim();
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.content = card);
 }
 function applyTheme(name){
   if(name === "sage") delete document.documentElement.dataset.theme;
