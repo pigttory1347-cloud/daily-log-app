@@ -130,13 +130,14 @@ body.kb nav{display:none}
 .btn.small{padding:10px; font-size:14px; margin-top:8px}
 .rec-photos{display:flex; flex-wrap:wrap; gap:6px; margin-top:7px}
 .rec-photos img{width:74px; height:74px; object-fit:cover; border-radius:10px; background:var(--field)}
-.lightbox{position:fixed; inset:0; background:rgba(0,0,0,.88); display:none;
+.lightbox{position:absolute; inset:0; background:rgba(0,0,0,.88); display:none;
   align-items:center; justify-content:center; z-index:60}
 .lightbox.show{display:flex}
 .lightbox img{max-width:94vw; max-height:88vh; border-radius:14px}
-.sheet-bg{position:fixed; inset:0; background:rgba(20,40,30,.45); z-index:30; display:none}
+/* 떠 있는 요소들은 body(실제 화면 전체 높이) 기준으로 배치 — iOS 뷰포트 759px 버그 회피 */
+.sheet-bg{position:absolute; inset:0; background:rgba(20,40,30,.45); z-index:30; display:none}
 .sheet-bg.show{display:block}
-.sheet{position:fixed; left:0; right:0; bottom:0; background:var(--card); z-index:31;
+.sheet{position:absolute; left:0; right:0; bottom:0; background:var(--card); z-index:31;
   border-radius:22px 22px 0 0; padding:20px 18px calc(22px + env(safe-area-inset-bottom));
   transform:translateY(100%); transition:transform .25s; max-height:80vh; overflow-y:auto}
 .sheet.show{transform:translateY(0)}
@@ -144,7 +145,7 @@ body.kb nav{display:none}
 h3{font-size:17px; margin:20px 4px 10px; font-weight:800}
 section{display:none}
 section.on{display:block}
-.toast{position:fixed; left:50%; bottom:calc(92px + env(safe-area-inset-bottom));
+.toast{position:absolute; left:50%; bottom:calc(92px + env(safe-area-inset-bottom));
   transform:translateX(-50%) translateY(8px); background:var(--text); color:var(--card);
   padding:11px 20px; border-radius:22px; font-size:14px; font-weight:600;
   opacity:0; transition:.25s; z-index:50; pointer-events:none; white-space:nowrap}
@@ -280,7 +281,7 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v13</div>
+  <div class="caption" style="text-align:center">앱 버전 v14</div>
   <div class="caption" id="diag" style="text-align:center"></div>
 </div>
 
