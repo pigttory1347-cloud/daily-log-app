@@ -40,7 +40,8 @@ html,body{margin:0; padding:0; height:100%; overflow:hidden;
   font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
   font-size:16px; -webkit-text-size-adjust:100%}
 /* 고정 레이아웃: 페이지는 안 움직이고 main 내부만 스크롤 → iOS 키보드 밀림 방지 */
-body{display:flex; flex-direction:column}
+/* 높이는 visualViewport를 따라감 — 키보드가 열리면 앱이 그만큼 줄어듦 */
+body{display:flex; flex-direction:column; height:var(--vh, 100%)}
 header{flex:none; background:var(--bg);
   padding:calc(12px + env(safe-area-inset-top)) 18px 10px;
   display:flex; align-items:center; justify-content:space-between}
@@ -277,7 +278,7 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v8</div>
+  <div class="caption" style="text-align:center">앱 버전 v9</div>
 </div>
 
 <div class="lightbox" id="lightbox"><img alt=""></div>
@@ -520,29 +521,49 @@ const _vv = window.visualViewport;
 function _kbOpen(){
   return _vv ? (_vv.height < window.innerHeight - 120) : false;
 }
+let _scrollBefore = null;   // 키보드 열리기 전 main 스크롤 위치
+function _mainEl(){ return document.querySelector("main"); }
+function _setVH(){
+  // 앱 높이를 실제 보이는 영역에 맞춤 (키보드가 열리면 그만큼 줄어듦)
+  document.documentElement.style.setProperty(
+    "--vh", (_vv ? _vv.height : window.innerHeight) + "px");
+}
 function _restorePan(){
   // iOS가 키보드 때문에 화면을 밀어올린 걸 원위치
   if(window.scrollY !== 0) window.scrollTo(0, 0);
   document.documentElement.scrollTop = 0;
 }
+function _kbClosed(){
+  document.body.classList.remove("kb");
+  _restorePan();
+  if(_scrollBefore !== null){
+    _mainEl().scrollTop = _scrollBefore;   // 입력 전 위치로 복귀
+    _scrollBefore = null;
+  }
+}
 if(_vv){
+  _setVH();
   _vv.addEventListener("resize", () => {
+    _setVH();
     const open = _kbOpen();
     document.body.classList.toggle("kb", open);
-    if(!open) setTimeout(_restorePan, 60);
+    if(!open) setTimeout(_kbClosed, 60);
   });
 }
+window.addEventListener("resize", _setVH);
 // 문서 자체는 스크롤될 일이 없으므로, 키보드가 닫혀 있는데 밀려 있으면 즉시 복원
 window.addEventListener("scroll", () => { if(!_kbOpen()) _restorePan(); });
 document.addEventListener("focusin", e => {
-  if(e.target.matches("input, textarea, select")) document.body.classList.add("kb");
+  if(e.target.matches("input, textarea, select")){
+    if(!document.body.classList.contains("kb")) _scrollBefore = _mainEl().scrollTop;
+    document.body.classList.add("kb");
+  }
 });
 document.addEventListener("focusout", () => {
   setTimeout(() => {
     if(_kbOpen()) return;
     if(!document.activeElement || !document.activeElement.matches("input, textarea, select"))
-      document.body.classList.remove("kb");
-    _restorePan();
+      _kbClosed();
   }, 80);
 });
 
