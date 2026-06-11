@@ -40,9 +40,11 @@ html,body{margin:0; padding:0; height:100%; overflow:hidden;
   font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
   font-size:16px; -webkit-text-size-adjust:100%}
 /* 고정 레이아웃: 페이지는 안 움직이고 main 내부만 스크롤 → iOS 키보드 밀림 방지 */
-/* 모든 콘텐츠는 보이는 뷰포트 안에. 뷰포트 아래 "죽은 영역"(iOS 단독실행 버그)은
-   탭바·시트의 배경색만 그림자 기법으로 연장해서 가림 — 글자·터치는 그 영역에서 동작 안 함 */
-body{position:fixed; inset:0; display:flex; flex-direction:column}
+/* iOS 단독실행 버그 대응: 뷰포트(793)보다 화면(852)이 큼.
+   body 박스를 100vh(실제 화면)까지 늘리면 배경은 바닥까지 칠해짐(v14에서 확인).
+   글자·버튼은 --dead(죽은 영역 높이, JS가 계산) 만큼 패딩으로 끌어올려 보이는 영역에 둠 */
+body{position:fixed; top:0; left:0; right:0; height:100vh;
+  display:flex; flex-direction:column}
 header{flex:none; background:var(--bg);
   padding:calc(12px + env(safe-area-inset-top)) 18px 10px;
   display:flex; align-items:center; justify-content:space-between}
@@ -108,11 +110,7 @@ textarea{min-height:90px; resize:vertical}
   box-shadow:var(--shadow)}
 nav{flex:none; display:flex; gap:4px; background:var(--card);
   border-radius:22px 22px 0 0; box-shadow:0 -4px 16px rgba(47,90,70,.12);
-  padding:7px 10px calc(7px + env(safe-area-inset-bottom)); z-index:20}
-/* 뷰포트 아래 "죽은 영역"을 덮는 배경판 — 이 영역엔 요소 배경색만 그려짐 (v14에서 확인) */
-.bottom-ext{position:absolute; top:100%; left:0; right:0; height:120px;
-  background:var(--card); z-index:40}
-body.lb-open .bottom-ext{background:#000}
+  padding:7px 10px calc(10px + env(safe-area-inset-bottom) + var(--dead, 0px)); z-index:20}
 nav button{flex:1; background:none; border:none; padding:8px 0 6px; color:var(--sub);
   font-size:11px; font-weight:600; display:flex; flex-direction:column; align-items:center;
   gap:3px; border-radius:15px}
@@ -133,14 +131,18 @@ body.kb nav{display:none}
 .btn.small{padding:10px; font-size:14px; margin-top:8px}
 .rec-photos{display:flex; flex-wrap:wrap; gap:6px; margin-top:7px}
 .rec-photos img{width:74px; height:74px; object-fit:cover; border-radius:10px; background:var(--field)}
-.lightbox{position:fixed; inset:0; background:rgba(0,0,0,.88); display:none;
+.lightbox{position:fixed; top:0; left:0; right:0; bottom:calc(0px - var(--dead, 0px));
+  background:rgba(0,0,0,.88); display:none;
   align-items:center; justify-content:center; z-index:60}
 .lightbox.show{display:flex}
 .lightbox img{max-width:94vw; max-height:88vh; border-radius:14px}
-.sheet-bg{position:fixed; inset:0; background:rgba(20,40,30,.45); z-index:30; display:none}
+.sheet-bg{position:fixed; top:0; left:0; right:0; bottom:calc(0px - var(--dead, 0px));
+  background:rgba(20,40,30,.45); z-index:30; display:none}
 .sheet-bg.show{display:block}
-.sheet{position:fixed; left:0; right:0; bottom:0; background:var(--card); z-index:31;
-  border-radius:22px 22px 0 0; padding:20px 18px calc(22px + env(safe-area-inset-bottom));
+.sheet{position:fixed; left:0; right:0; bottom:calc(0px - var(--dead, 0px));
+  background:var(--card); z-index:31;
+  border-radius:22px 22px 0 0;
+  padding:20px 18px calc(22px + env(safe-area-inset-bottom) + var(--dead, 0px));
   transform:translateY(100%); transition:transform .25s; max-height:80vh; overflow-y:auto}
 .sheet.show{transform:translateY(0)}
 .sheet h2{margin:0 0 4px; font-size:18px}
@@ -283,12 +285,11 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v16</div>
+  <div class="caption" style="text-align:center">앱 버전 v17</div>
   <div class="caption" id="diag" style="text-align:center"></div>
 </div>
 
 <div class="lightbox" id="lightbox"><img alt=""></div>
-<div class="bottom-ext" aria-hidden="true"></div>
 
 <script>
 "use strict";
@@ -522,6 +523,19 @@ function renderThemeRow(){
   if(saved && saved !== "sage") document.documentElement.dataset.theme = saved;
 }
 
+/* ===================== iOS 죽은 영역(--dead) 계산 ===================== */
+/* 단독실행 iOS에서 화면(screen.height)보다 뷰포트(innerHeight)가 짧으면
+   그 차이만큼 화면 아래가 죽은 영역 — 탭바·시트 패딩으로 보정 */
+function _setDead(){
+  let dead = 0;
+  if(navigator.standalone && screen && screen.height > window.innerHeight){
+    dead = Math.max(0, Math.min(100, screen.height - window.innerHeight));
+  }
+  document.documentElement.style.setProperty("--dead", dead + "px");
+}
+_setDead();
+window.addEventListener("orientationchange", () => setTimeout(_setDead, 300));
+
 /* ===================== 키보드 ↔ 하단 탭바 ===================== */
 /* 키보드가 화면을 줄이면(visualViewport) 탭바를 숨김 — 포커스 이벤트보다 확실함 */
 const _vv = window.visualViewport;
@@ -740,10 +754,8 @@ document.addEventListener("click", e => {
   if(e.target.matches(".rec-photos img") && e.target.src){
     lb.querySelector("img").src = e.target.src;
     lb.classList.add("show");
-    document.body.classList.add("lb-open");
   }else if(e.target.closest("#lightbox")){
     lb.classList.remove("show");
-    document.body.classList.remove("lb-open");
   }
 });
 
