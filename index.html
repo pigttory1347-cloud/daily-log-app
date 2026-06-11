@@ -40,8 +40,10 @@ html,body{margin:0; padding:0; height:100%; overflow:hidden;
   font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
   font-size:16px; -webkit-text-size-adjust:100%}
 /* 고정 레이아웃: 페이지는 안 움직이고 main 내부만 스크롤 → iOS 키보드 밀림 방지 */
-/* body를 화면에 직접 고정 — iOS 단독실행 모드에서 100% 높이가 짧게 잡히는 문제 회피 */
-body{position:fixed; inset:0; display:flex; flex-direction:column}
+/* body를 화면에 직접 고정 — iOS 단독실행 모드에서 100% 높이가 짧게 잡히는 문제 회피
+   100vh = "가장 큰 뷰포트" 기준이라 단독실행에서 실제 화면 전체 높이에 가장 가까움 */
+body{position:fixed; top:0; left:0; right:0; height:100vh;
+  display:flex; flex-direction:column}
 header{flex:none; background:var(--bg);
   padding:calc(12px + env(safe-area-inset-top)) 18px 10px;
   display:flex; align-items:center; justify-content:space-between}
@@ -278,7 +280,8 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v12</div>
+  <div class="caption" style="text-align:center">앱 버전 v13</div>
+  <div class="caption" id="diag" style="text-align:center"></div>
 </div>
 
 <div class="lightbox" id="lightbox"><img alt=""></div>
@@ -1015,6 +1018,11 @@ const sheetBg = document.getElementById("sheet-bg");
 function openSheet(){
   const n = DB.records.length, m = Object.keys(DB.diary).length;
   document.getElementById("data-stats").textContent = `기록 ${n}건 · 일기 ${m}편 저장돼 있어요.`;
+  const sab = getComputedStyle(document.documentElement).getPropertyValue("--sab") || "?";
+  document.getElementById("diag").textContent =
+    `진단 inner ${window.innerWidth}×${window.innerHeight} · screen ${screen.width}×${screen.height}` +
+    ` · vv ${_vv ? Math.round(_vv.height) : "-"} · body ${Math.round(document.body.getBoundingClientRect().height)}` +
+    ` · nav바닥 ${Math.round(document.querySelector("nav").getBoundingClientRect().bottom)}`;
   sheetBg.classList.add("show"); sheet.classList.add("show");
 }
 function closeSheet(){ sheetBg.classList.remove("show"); sheet.classList.remove("show"); }
