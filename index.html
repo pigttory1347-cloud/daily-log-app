@@ -10,7 +10,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="일상 기록">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#DCE9E1">
 <style>
 /* ---- 테마: 기본 = 세이지 (저채도 그린) ---- */
 :root{
@@ -108,14 +108,15 @@ textarea{min-height:90px; resize:vertical}
 .diary-item .diary-body{background:var(--card); border-top:1.5px dashed var(--line);
   border-radius:0 0 16px 16px; padding:13px 16px; white-space:pre-wrap; font-size:15px;
   box-shadow:var(--shadow)}
+/* 플로팅 알약 탭바 */
 nav{flex:none; display:flex; gap:4px; background:var(--card);
-  border-radius:22px 22px 0 0; box-shadow:0 -4px 16px rgba(47,90,70,.12);
-  /* 죽은 영역(--dead)이 있는 기기는 홈 인디케이터가 그 안에 있으므로 안전 여백에서 차감 */
-  padding:7px 10px calc(8px + max(0px, env(safe-area-inset-bottom) - var(--dead, 0px)));
-  z-index:20}
-nav button{flex:1; background:none; border:none; padding:8px 0 6px; color:var(--sub);
+  border-radius:999px; border:1px solid var(--line);
+  box-shadow:0 4px 14px rgba(47,90,70,.14);
+  margin:8px 16px calc(12px + max(0px, env(safe-area-inset-bottom) - var(--dead, 0px)));
+  padding:6px 8px; z-index:20}
+nav button{flex:1; background:none; border:none; padding:7px 0 5px; color:var(--sub);
   font-size:11px; font-weight:600; display:flex; flex-direction:column; align-items:center;
-  gap:3px; border-radius:15px}
+  gap:2px; border-radius:999px}
 nav button svg{width:23px; height:23px}
 nav button.on{color:var(--accent); background:var(--chip)}
 /* 키보드가 올라오면 하단 탭바 숨김 (iOS에서 키보드 위로 떠오르는 문제) */
@@ -284,8 +285,7 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v20</div>
-  <div class="caption" id="diag" style="text-align:center"></div>
+  <div class="caption" style="text-align:center">앱 버전 v21</div>
 </div>
 
 <div class="lightbox" id="lightbox"><img alt=""></div>
@@ -494,9 +494,9 @@ const THEMES = [
 const THEME_KEY = "dailylog_theme";
 
 function syncThemeColorMeta(){
-  // 죽은 영역(탭바 아래)이 theme-color로 칠해질 수 있어 카드색(흰색)으로 통일
-  const card = getComputedStyle(document.documentElement).getPropertyValue("--card").trim();
-  document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.content = card);
+  // 죽은 영역(탭바 아래)이 이 색으로 칠해질 수 있음 — 플로팅 탭바라 배경색으로 통일
+  const bg = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim();
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.content = bg);
 }
 function applyTheme(name){
   if(name === "sage") delete document.documentElement.dataset.theme;
@@ -1038,11 +1038,6 @@ const sheetBg = document.getElementById("sheet-bg");
 function openSheet(){
   const n = DB.records.length, m = Object.keys(DB.diary).length;
   document.getElementById("data-stats").textContent = `기록 ${n}건 · 일기 ${m}편 저장돼 있어요.`;
-  const sab = getComputedStyle(document.documentElement).getPropertyValue("--sab") || "?";
-  document.getElementById("diag").textContent =
-    `진단 inner ${window.innerWidth}×${window.innerHeight} · screen ${screen.width}×${screen.height}` +
-    ` · vv ${_vv ? Math.round(_vv.height) : "-"} · body ${Math.round(document.body.getBoundingClientRect().height)}` +
-    ` · nav바닥 ${Math.round(document.querySelector("nav").getBoundingClientRect().bottom)}`;
   sheetBg.classList.add("show"); sheet.classList.add("show");
 }
 function closeSheet(){ sheetBg.classList.remove("show"); sheet.classList.remove("show"); }
