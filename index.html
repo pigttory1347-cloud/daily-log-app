@@ -13,21 +13,47 @@
 <meta name="theme-color" content="#15201B" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#BDE8D9" media="(prefers-color-scheme: light)">
 <style>
+/* ---- 테마: 기본 = 세이지 (저채도 그린) ---- */
 :root{
-  --bg:#BDE8D9; --card:#ffffff; --text:#2E3A33; --sub:#7C9489;
-  --accent:#5FAE7B; --line:#E2F0E8; --chip:#EAF6EF; --field:#F2F9F5;
-  --danger:#E08A7E; --star:#F5B544; --star-off:#D6E8DD;
-  --btn-bg:#5FAE7B; --btn-text:#ffffff;
-  --shadow:0 3px 10px rgba(47,90,70,.10);
+  --bg:#DCE9E1; --card:#ffffff; --text:#333A36; --sub:#85928B;
+  --accent:#7FA98E; --line:#E2EBE5; --chip:#EAF2ED; --field:#F4F8F6;
+  --danger:#D99287; --star:#EDB868; --star-off:#DFE8E2;
+  --btn-bg:#7FA98E; --btn-text:#ffffff;
+  --shadow:0 3px 10px rgba(60,80,70,.08);
 }
+html[data-theme=lavender]{ --bg:#E4E1F0; --accent:#9189BB; --btn-bg:#9189BB;
+  --line:#E7E4F2; --chip:#EEECF6; --field:#F7F6FB; --star-off:#E3E0EE;
+  --shadow:0 3px 10px rgba(70,65,100,.08); }
+html[data-theme=peach]{ --bg:#F2E3D6; --accent:#C09469; --btn-bg:#C09469;
+  --line:#EFE4D8; --chip:#F7EEE4; --field:#FBF6F0; --star-off:#EEE2D4;
+  --shadow:0 3px 10px rgba(110,85,60,.08); }
+html[data-theme=sky]{ --bg:#DCE7EE; --accent:#7E9EB5; --btn-bg:#7E9EB5;
+  --line:#E2EBF1; --chip:#EAF1F6; --field:#F4F8FB; --star-off:#DFE9EF;
+  --shadow:0 3px 10px rgba(60,80,100,.08); }
+html[data-theme=mono]{ --bg:#E9E7E4; --accent:#878D89; --btn-bg:#878D89;
+  --line:#E8E6E3; --chip:#F0EFED; --field:#F8F7F6; --star-off:#E5E3E0;
+  --shadow:0 3px 10px rgba(70,70,70,.07); }
+
 @media (prefers-color-scheme: dark){
   :root{
-    --bg:#15201B; --card:#1F2D26; --text:#E6F2EA; --sub:#9DB5A8;
-    --accent:#8FD9A0; --line:#2F4237; --chip:#2A3A31; --field:#18241E;
-    --danger:#E89A8E; --star-off:#3A5044;
-    --btn-bg:#8FD9A0; --btn-text:#15201B;
+    --bg:#171B19; --card:#222824; --text:#E5EBE7; --sub:#98A59E;
+    --accent:#9DC4AA; --line:#2E3531; --chip:#2A302C; --field:#1B201D;
+    --danger:#DB9C90; --star-off:#39423C;
+    --btn-bg:#9DC4AA; --btn-text:#171B19;
     --shadow:none;
   }
+  html[data-theme=lavender]{ --bg:#191822; --line:#2F2D3D; --chip:#2B2937;
+    --field:#1D1C27; --star-off:#3B3950; --shadow:none;
+    --accent:#B2ABD6; --btn-bg:#B2ABD6; }
+  html[data-theme=peach]{ --bg:#1F1A15; --line:#3A322A; --chip:#342D25;
+    --field:#241E18; --star-off:#473D32; --shadow:none;
+    --accent:#D3AE85; --btn-bg:#D3AE85; }
+  html[data-theme=sky]{ --bg:#161B1F; --line:#2C353C; --chip:#283036;
+    --field:#1A2024; --star-off:#374249; --shadow:none;
+    --accent:#9CBAD0; --btn-bg:#9CBAD0; }
+  html[data-theme=mono]{ --bg:#1A1A1A; --line:#323232; --chip:#2C2C2C;
+    --field:#1F1F1F; --star-off:#404040; --shadow:none;
+    --accent:#A6ACA8; --btn-bg:#A6ACA8; }
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
 html,body{margin:0; padding:0; background:var(--bg); color:var(--text);
@@ -54,7 +80,10 @@ label{display:block; font-size:13px; color:var(--sub); margin:11px 2px 5px; font
 input[type=text],input[type=url],input[type=date],input[type=number],textarea,select{
   width:100%; padding:12px 13px; border-radius:13px; border:1.5px solid var(--line);
   background:var(--field); color:var(--text); font-size:16px; font-family:inherit;
-  outline:none}
+  outline:none; -webkit-appearance:none; appearance:none}
+/* iOS에서 날짜 입력칸이 줄어드는 것 방지 — 다른 입력칸과 같은 폭/높이 */
+input[type=date]{display:block; min-height:48px; text-align:left}
+input[type=date]::-webkit-date-and-time-value{text-align:left}
 input:focus,textarea:focus{border-color:var(--accent)}
 textarea{min-height:90px; resize:vertical}
 .btn{display:block; width:100%; padding:13px; border-radius:15px; border:none;
@@ -64,8 +93,9 @@ textarea{min-height:90px; resize:vertical}
 .btn:active{opacity:.7}
 .row2{display:flex; gap:10px}
 .row2>div{flex:1}
-.stars{display:flex; gap:4px; padding:4px 0}
-.stars button{background:none; border:none; font-size:30px; color:var(--star-off); padding:0 2px}
+.stars{display:flex; gap:2px; padding:8px 0 4px; min-width:0}
+.stars button{background:none; border:none; font-size:24px; line-height:1.2;
+  color:var(--star-off); padding:0 1px; flex:0 1 auto; min-width:0}
 .stars button.on{color:var(--star)}
 .rec-card{display:flex; gap:12px}
 .rec-thumb{flex:0 0 92px}
@@ -100,6 +130,26 @@ nav button{flex:1; background:none; border:none; padding:8px 0 6px; color:var(--
   gap:3px; border-radius:15px}
 nav button svg{width:23px; height:23px}
 nav button.on{color:var(--accent); background:var(--chip)}
+/* 키보드가 올라오면 하단 탭바 숨김 (iOS에서 키보드 위로 떠오르는 문제) */
+body.kb nav{display:none}
+body.kb{padding-bottom:12px}
+.themes{display:flex; gap:12px; padding:6px 2px 2px}
+.theme-dot{width:40px; height:40px; border-radius:50%; border:3px solid transparent; padding:0}
+.theme-dot.on{border-color:var(--text)}
+.photo-row{display:flex; flex-wrap:wrap; gap:10px; padding:4px 0}
+.photo-row .ph{position:relative}
+.photo-row img{width:72px; height:72px; object-fit:cover; border-radius:11px; display:block;
+  background:var(--field)}
+.photo-row .ph button{position:absolute; top:-7px; right:-7px; width:22px; height:22px;
+  border-radius:50%; border:none; background:var(--text); color:var(--card);
+  font-size:12px; line-height:1; padding:0}
+.btn.small{padding:10px; font-size:14px; margin-top:8px}
+.rec-photos{display:flex; flex-wrap:wrap; gap:6px; margin-top:7px}
+.rec-photos img{width:74px; height:74px; object-fit:cover; border-radius:10px; background:var(--field)}
+.lightbox{position:fixed; inset:0; background:rgba(0,0,0,.88); display:none;
+  align-items:center; justify-content:center; z-index:60}
+.lightbox.show{display:flex}
+.lightbox img{max-width:94vw; max-height:88vh; border-radius:14px}
 .sheet-bg{position:fixed; inset:0; background:rgba(20,40,30,.45); z-index:30; display:none}
 .sheet-bg.show{display:block}
 .sheet{position:fixed; left:0; right:0; bottom:0; background:var(--card); z-index:31;
@@ -171,6 +221,11 @@ section.on{display:block}
       <label>감상 / 메모</label>
       <textarea id="f-memo" placeholder="뭐가 재밌었고 뭐가 감명깊었는지"></textarea>
 
+      <label>사진 (선택)</label>
+      <div class="photo-row" id="f-photos"></div>
+      <button class="btn secondary small" id="f-photo-btn">사진 추가</button>
+      <input type="file" id="f-photo-input" accept="image/*" multiple style="display:none">
+
       <button class="btn" id="f-save">저장</button>
     </div>
 
@@ -187,6 +242,10 @@ section.on{display:block}
       <label>오늘 하루</label>
       <textarea id="d-content" style="min-height:160px"
         placeholder="오늘 뭐 했고, 뭐가 좋았고, 뭐가 아쉬웠는지..."></textarea>
+      <label>사진 (선택)</label>
+      <div class="photo-row" id="d-photos"></div>
+      <button class="btn secondary small" id="d-photo-btn">사진 추가</button>
+      <input type="file" id="d-photo-input" accept="image/*" multiple style="display:none">
       <button class="btn" id="d-save">저장</button>
       <button class="btn danger" id="d-del" style="display:none">이 날짜 일기 삭제</button>
     </div>
@@ -224,7 +283,10 @@ section.on{display:block}
 <!-- 데이터 관리 시트 -->
 <div class="sheet-bg" id="sheet-bg"></div>
 <div class="sheet" id="data-sheet">
-  <h2>데이터 관리</h2>
+  <h2>설정</h2>
+  <div class="caption" style="margin-bottom:2px">테마 색</div>
+  <div class="themes" id="theme-row"></div>
+  <h2 style="margin-top:18px">데이터 관리</h2>
   <div class="caption" id="data-stats"></div>
   <button class="btn" id="exp-btn">내보내기 (JSON 백업)</button>
   <button class="btn secondary" id="imp-btn">가져오기 (JSON)</button>
@@ -234,6 +296,8 @@ section.on{display:block}
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
 </div>
+
+<div class="lightbox" id="lightbox"><img alt=""></div>
 
 <script>
 "use strict";
@@ -428,6 +492,56 @@ async function tryFetchYtTitle(url){
   }catch(e){ return null; }
 }
 
+/* ===================== 테마 ===================== */
+const THEMES = [
+  ["sage", "세이지", "#7FA98E"],
+  ["lavender", "라벤더", "#9189BB"],
+  ["peach", "피치", "#C09469"],
+  ["sky", "하늘", "#7E9EB5"],
+  ["mono", "모노", "#878D89"],
+];
+const THEME_KEY = "dailylog_theme";
+
+function syncThemeColorMeta(){
+  const bg = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim();
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.content = bg);
+}
+function applyTheme(name){
+  if(name === "sage") delete document.documentElement.dataset.theme;
+  else document.documentElement.dataset.theme = name;
+  localStorage.setItem(THEME_KEY, name);
+  syncThemeColorMeta();
+  renderThemeRow();
+}
+function renderThemeRow(){
+  const cur = localStorage.getItem(THEME_KEY) || "sage";
+  const row = document.getElementById("theme-row");
+  row.innerHTML = "";
+  for(const [name, label, color] of THEMES){
+    const b = document.createElement("button");
+    b.className = "theme-dot" + (name === cur ? " on" : "");
+    b.style.background = color;
+    b.title = label; b.setAttribute("aria-label", label);
+    b.addEventListener("click", () => applyTheme(name));
+    row.appendChild(b);
+  }
+}
+{
+  const saved = localStorage.getItem(THEME_KEY);
+  if(saved && saved !== "sage") document.documentElement.dataset.theme = saved;
+}
+
+/* ===================== 키보드 ↔ 하단 탭바 ===================== */
+document.addEventListener("focusin", e => {
+  if(e.target.matches("input, textarea, select")) document.body.classList.add("kb");
+});
+document.addEventListener("focusout", () => {
+  setTimeout(() => {
+    if(!document.activeElement || !document.activeElement.matches("input, textarea, select"))
+      document.body.classList.remove("kb");
+  }, 50);
+});
+
 /* ===================== 토스트 ===================== */
 let toastTimer = null;
 function toast(msg){
@@ -443,6 +557,143 @@ function toast(msg){
   toastTimer = setTimeout(() => el.classList.remove("show"), 1800);
 }
 
+/* ===================== 사진 (IndexedDB 저장) ===================== */
+let _idb = null;
+function imgDB(){
+  return new Promise((res, rej) => {
+    if(_idb) return res(_idb);
+    const req = indexedDB.open("dailylog-img", 1);
+    req.onupgradeneeded = () => req.result.createObjectStore("imgs");
+    req.onsuccess = () => { _idb = req.result; res(_idb); };
+    req.onerror = () => rej(req.error);
+  });
+}
+async function imgPut(id, blob){
+  const db = await imgDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction("imgs", "readwrite");
+    tx.objectStore("imgs").put(blob, id);
+    tx.oncomplete = res; tx.onerror = () => rej(tx.error);
+  });
+}
+async function imgGet(id){
+  const db = await imgDB();
+  return new Promise(res => {
+    const rq = db.transaction("imgs").objectStore("imgs").get(id);
+    rq.onsuccess = () => res(rq.result || null);
+    rq.onerror = () => res(null);
+  });
+}
+async function imgDel(ids){
+  if(!ids || !ids.length) return;
+  const db = await imgDB();
+  const tx = db.transaction("imgs", "readwrite");
+  ids.forEach(i => tx.objectStore("imgs").delete(i));
+}
+async function imgClear(){
+  const db = await imgDB();
+  return new Promise(res => {
+    const tx = db.transaction("imgs", "readwrite");
+    tx.objectStore("imgs").clear();
+    tx.oncomplete = res;
+  });
+}
+function newImgId(){ return "p" + Date.now() + Math.random().toString(36).slice(2, 7); }
+
+function fileToResizedBlob(file, maxDim = 1280, q = 0.8){
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => {
+      let w = img.naturalWidth, h = img.naturalHeight;
+      if(Math.max(w, h) > maxDim){
+        const s = maxDim / Math.max(w, h);
+        w = Math.round(w * s); h = Math.round(h * s);
+      }
+      const c = document.createElement("canvas");
+      c.width = w; c.height = h;
+      c.getContext("2d").drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(img.src);
+      c.toBlob(b => b ? res(b) : rej(new Error("이미지 변환 실패")), "image/jpeg", q);
+    };
+    img.onerror = () => { URL.revokeObjectURL(img.src); rej(new Error("이미지 열기 실패")); };
+    img.src = URL.createObjectURL(file);
+  });
+}
+function blobToDataURL(blob){
+  return new Promise(res => {
+    const fr = new FileReader();
+    fr.onload = () => res(fr.result);
+    fr.readAsDataURL(blob);
+  });
+}
+function dataURLToBlob(durl){
+  const [head, b64] = durl.split(",");
+  const mime = (head.match(/data:(.*?);/) || [,"image/jpeg"])[1];
+  const bin = atob(b64);
+  const arr = new Uint8Array(bin.length);
+  for(let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], {type: mime});
+}
+
+const _imgURLs = new Map();
+async function imgURL(id){
+  if(_imgURLs.has(id)) return _imgURLs.get(id);
+  const b = await imgGet(id);
+  if(!b) return null;
+  const u = URL.createObjectURL(b);
+  _imgURLs.set(id, u);
+  return u;
+}
+async function hydratePhotos(root){
+  for(const im of root.querySelectorAll("img[data-pid]:not([src])")){
+    const u = await imgURL(im.dataset.pid);
+    if(u) im.src = u;
+  }
+}
+
+/* 폼 사진 선택 위젯 (기록·일기 공용) */
+function photoPicker(listId, btnId, inputId){
+  const state = []; // {id} = 저장된 사진, {blob, url} = 새로 고른 사진
+  const listEl = document.getElementById(listId);
+  document.getElementById(btnId).addEventListener("click", () =>
+    document.getElementById(inputId).click());
+  document.getElementById(inputId).addEventListener("change", async e => {
+    for(const f of e.target.files){
+      try{
+        const blob = await fileToResizedBlob(f);
+        state.push({blob, url: URL.createObjectURL(blob)});
+      }catch(err){ toast("사진 처리에 실패했어요"); }
+    }
+    e.target.value = "";
+    render();
+  });
+  function render(){
+    listEl.innerHTML = "";
+    state.forEach((p, i) => {
+      const d = document.createElement("div"); d.className = "ph";
+      const im = document.createElement("img");
+      if(p.url) im.src = p.url;
+      else if(p.id) im.dataset.pid = p.id;
+      const x = document.createElement("button"); x.textContent = "✕";
+      x.addEventListener("click", () => { state.splice(i, 1); render(); });
+      d.appendChild(im); d.appendChild(x); listEl.appendChild(d);
+    });
+    hydratePhotos(listEl);
+  }
+  return {
+    reset(ids){ state.length = 0; (ids || []).forEach(id => state.push({id})); render(); },
+    currentIds(){ return state.filter(p => p.id).map(p => p.id); },
+    async commit(){
+      const ids = [];
+      for(const p of state){
+        if(p.id) ids.push(p.id);
+        else { const id = newImgId(); await imgPut(id, p.blob); ids.push(id); }
+      }
+      return ids;
+    }
+  };
+}
+
 /* ===================== UI: 탭 ===================== */
 const TITLES = {records:"기록", diary:"일기", search:"검색"};
 document.querySelectorAll("nav button").forEach(btn => {
@@ -454,6 +705,20 @@ document.querySelectorAll("nav button").forEach(btn => {
     document.getElementById("page-title").textContent = TITLES[tab];
     window.scrollTo(0, 0);
   });
+});
+
+const recPhotos = photoPicker("f-photos", "f-photo-btn", "f-photo-input");
+const diaryPhotos = photoPicker("d-photos", "d-photo-btn", "d-photo-input");
+
+/* 사진 크게 보기 */
+document.addEventListener("click", e => {
+  const lb = document.getElementById("lightbox");
+  if(e.target.matches(".rec-photos img") && e.target.src){
+    lb.querySelector("img").src = e.target.src;
+    lb.classList.add("show");
+  }else if(e.target.closest("#lightbox")){
+    lb.classList.remove("show");
+  }
 });
 
 /* ===================== UI: 기록 입력 폼 ===================== */
@@ -510,13 +775,15 @@ document.getElementById("f-url").addEventListener("input", e => {
   }, 600);
 });
 
-document.getElementById("f-save").addEventListener("click", () => {
+document.getElementById("f-save").addEventListener("click", async () => {
   const title = document.getElementById("f-title").value.trim();
   const url = document.getElementById("f-url").value.trim();
   if(curKind === "youtube" && !title && !url){ alert("URL이나 제목을 입력해 주세요."); return; }
   if(curKind !== "youtube" && !title){ alert("제목을 입력해 주세요."); return; }
 
+  const photoIds = await recPhotos.commit();
   const rec = {
+    photos: photoIds,
     id: Date.now() + "-" + Math.random().toString(36).slice(2, 7),
     kind: curKind,
     title: title || "(제목 없음)",
@@ -535,6 +802,7 @@ document.getElementById("f-save").addEventListener("click", () => {
   ["f-url","f-title","f-creator","f-link","f-memo"].forEach(id => document.getElementById(id).value = "");
   document.getElementById("f-ep").value = 1;
   curRating = 0; renderStars();
+  recPhotos.reset([]);
   document.getElementById("f-url-hint").textContent = "붙여넣으면 썸네일은 자동, 제목은 인터넷 연결 시 자동으로 채워져요.";
   renderRecordList();
   toast("저장했어요! 🐢");
@@ -568,6 +836,7 @@ function recordCardHTML(r, deletable){
       <div class="rec-title">${esc(r.title)}${detail}${star}</div>
       <div class="rec-sub">${sub}</div>
       ${r.memo ? `<div class="rec-memo">${esc(r.memo)}</div>` : ""}
+      ${(r.photos && r.photos.length) ? `<div class="rec-photos">${r.photos.map(id => `<img data-pid="${esc(id)}" alt="">`).join("")}</div>` : ""}
       ${(link || del) ? `<div class="rec-actions">${link}${del}</div>` : ""}
     </div>
   </div>`;
@@ -580,10 +849,13 @@ function renderRecordList(){
   el.innerHTML = rows.length
     ? rows.map(r => recordCardHTML(r, true)).join("")
     : `<div class="empty">🐢<br>아직 기록이 없어요.<br>위에서 추가해 보세요.</div>`;
+  hydratePhotos(el);
 }
 document.getElementById("record-list").addEventListener("click", e => {
   const id = e.target.dataset && e.target.dataset.del;
   if(id && confirm("이 기록을 삭제할까요?")){
+    const rec = DB.records.find(r => r.id === id);
+    if(rec && rec.photos) imgDel(rec.photos);
     DB.records = DB.records.filter(r => r.id !== id);
     save(); renderRecordList();
   }
@@ -595,20 +867,27 @@ function loadDiaryForm(){
   const entry = DB.diary[ds];
   document.getElementById("d-content").value = entry ? entry.content : "";
   document.getElementById("d-del").style.display = entry ? "" : "none";
+  diaryPhotos.reset(entry ? entry.photos : []);
 }
 document.getElementById("d-date").addEventListener("change", loadDiaryForm);
-document.getElementById("d-save").addEventListener("click", () => {
+document.getElementById("d-save").addEventListener("click", async () => {
   const ds = document.getElementById("d-date").value;
   const content = document.getElementById("d-content").value.trim();
   if(!ds){ alert("날짜를 선택해 주세요."); return; }
   if(!content){ alert("내용을 입력해 주세요."); return; }
-  DB.diary[ds] = {content, updatedAt: Date.now()};
+  const prev = DB.diary[ds];
+  const photoIds = await diaryPhotos.commit();
+  if(prev && prev.photos){
+    imgDel(prev.photos.filter(id => !photoIds.includes(id)));  // 빠진 사진 정리
+  }
+  DB.diary[ds] = {content, updatedAt: Date.now(), photos: photoIds};
   save(); loadDiaryForm(); renderDiaryList();
   toast("일기를 저장했어요 🐢");
 });
 document.getElementById("d-del").addEventListener("click", () => {
   const ds = document.getElementById("d-date").value;
   if(DB.diary[ds] && confirm("이 날짜의 일기를 삭제할까요?")){
+    if(DB.diary[ds].photos) imgDel(DB.diary[ds].photos);
     delete DB.diary[ds];
     save(); loadDiaryForm(); renderDiaryList();
   }
@@ -619,9 +898,11 @@ function renderDiaryList(){
   el.innerHTML = entries.length
     ? entries.map(([ds, d]) => `<details class="diary-item">
         <summary>${ds} (${weekdayOf(ds)})</summary>
-        <div class="diary-body">${esc(d.content)}</div>
+        <div class="diary-body">${esc(d.content)}${(d.photos && d.photos.length)
+          ? `<div class="rec-photos">${d.photos.map(id => `<img data-pid="${esc(id)}" alt="">`).join("")}</div>` : ""}</div>
       </details>`).join("")
     : `<div class="empty">🐢<br>아직 일기가 없어요.</div>`;
+  hydratePhotos(el);
 }
 
 /* ===================== UI: 검색 ===================== */
@@ -655,6 +936,7 @@ function runSearch(){
     </div>`).join("");
   }
   out.innerHTML = html;
+  hydratePhotos(out);
 }
 document.getElementById("s-go").addEventListener("click", runSearch);
 document.getElementById("s-q").addEventListener("keydown", e => { if(e.key === "Enter"){ e.target.blur(); runSearch(); } });
@@ -676,8 +958,17 @@ function closeSheet(){ sheetBg.classList.remove("show"); sheet.classList.remove(
 document.getElementById("data-btn").addEventListener("click", openSheet);
 sheetBg.addEventListener("click", closeSheet);
 
-document.getElementById("exp-btn").addEventListener("click", () => {
-  const payload = JSON.stringify({version:1, exportedAt:new Date().toISOString(), records:DB.records, diary:DB.diary}, null, 2);
+document.getElementById("exp-btn").addEventListener("click", async () => {
+  // 사진까지 포함해서 내보내기
+  const ids = new Set();
+  DB.records.forEach(r => (r.photos || []).forEach(i => ids.add(i)));
+  Object.values(DB.diary).forEach(d => (d.photos || []).forEach(i => ids.add(i)));
+  const photos = {};
+  for(const id of ids){
+    const b = await imgGet(id);
+    if(b) photos[id] = await blobToDataURL(b);
+  }
+  const payload = JSON.stringify({version:2, exportedAt:new Date().toISOString(), records:DB.records, diary:DB.diary, photos}, null, 2);
   const blob = new Blob([payload], {type:"application/json"});
   const fname = `일상기록-백업-${todayStr()}.json`;
   const file = new File([blob], fname, {type:"application/json"});
@@ -698,6 +989,12 @@ document.getElementById("imp-file").addEventListener("change", async e => {
     const data = JSON.parse(await f.text());
     if(!Array.isArray(data.records) || typeof data.diary !== "object") throw new Error("형식이 달라요");
     const merge = confirm("확인 = 기존 데이터에 합치기\n취소 = 기존 데이터를 지우고 덮어쓰기");
+    if(!merge) await imgClear();
+    if(data.photos){
+      for(const [pid, durl] of Object.entries(data.photos)){
+        await imgPut(pid, dataURLToBlob(durl));
+      }
+    }
     if(merge){
       const sig = r => [r.kind, r.title, r.date, r.memo||""].join("|");
       const seen = new Set(DB.records.map(sig));
@@ -731,6 +1028,7 @@ document.getElementById("d-date").value = todayStr();
 renderKindChips(); applyKindForm(); renderStars();
 renderFilterChips(); renderRecordList();
 loadDiaryForm(); renderDiaryList();
+renderThemeRow(); syncThemeColorMeta();
 
 if("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")){
   navigator.serviceWorker.register("sw.js").catch(()=>{});
