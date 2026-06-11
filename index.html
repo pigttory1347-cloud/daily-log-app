@@ -278,7 +278,7 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v9</div>
+  <div class="caption" style="text-align:center">앱 버전 v10</div>
 </div>
 
 <div class="lightbox" id="lightbox"><img alt=""></div>
@@ -523,15 +523,21 @@ function _kbOpen(){
 }
 let _scrollBefore = null;   // 키보드 열리기 전 main 스크롤 위치
 function _mainEl(){ return document.querySelector("main"); }
-function _setVH(){
-  // 앱 높이를 실제 보이는 영역에 맞춤 (키보드가 열리면 그만큼 줄어듦)
-  document.documentElement.style.setProperty(
-    "--vh", (_vv ? _vv.height : window.innerHeight) + "px");
+function _syncViewport(){
+  // 앱 높이·위치를 실제 보이는 영역에 정확히 맞춤
+  // (키보드가 열리면 높이는 줄이고, iOS가 화면을 밀어올린 만큼 따라 내려가서 상쇄)
+  const h = _vv ? _vv.height : window.innerHeight;
+  document.documentElement.style.setProperty("--vh", h + "px");
+  if(_vv){
+    const off = Math.max(0, _vv.offsetTop + (window.scrollY || 0));
+    document.body.style.transform = off ? `translateY(${off}px)` : "";
+  }
 }
 function _restorePan(){
   // iOS가 키보드 때문에 화면을 밀어올린 걸 원위치
   if(window.scrollY !== 0) window.scrollTo(0, 0);
   document.documentElement.scrollTop = 0;
+  _syncViewport();
 }
 function _kbClosed(){
   document.body.classList.remove("kb");
@@ -542,17 +548,21 @@ function _kbClosed(){
   }
 }
 if(_vv){
-  _setVH();
+  _syncViewport();
   _vv.addEventListener("resize", () => {
-    _setVH();
+    _syncViewport();
     const open = _kbOpen();
     document.body.classList.toggle("kb", open);
     if(!open) setTimeout(_kbClosed, 60);
   });
+  _vv.addEventListener("scroll", _syncViewport);
 }
-window.addEventListener("resize", _setVH);
+window.addEventListener("resize", _syncViewport);
 // 문서 자체는 스크롤될 일이 없으므로, 키보드가 닫혀 있는데 밀려 있으면 즉시 복원
-window.addEventListener("scroll", () => { if(!_kbOpen()) _restorePan(); });
+window.addEventListener("scroll", () => {
+  if(_kbOpen()) _syncViewport();   // 키보드 열린 동안의 밀림도 따라가며 상쇄
+  else _restorePan();
+});
 document.addEventListener("focusin", e => {
   if(e.target.matches("input, textarea, select")){
     if(!document.body.classList.contains("kb")) _scrollBefore = _mainEl().scrollTop;
