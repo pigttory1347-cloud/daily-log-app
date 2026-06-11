@@ -41,11 +41,13 @@ html,body{margin:0; padding:0; overflow:hidden;
   font-size:16px; -webkit-text-size-adjust:100%}
 /* 고정 레이아웃: 페이지는 안 움직이고 main 내부만 스크롤 → iOS 키보드 밀림 방지 */
 /* iOS 단독실행(viewport-fit=cover+black-translucent)에서 height:100%와 inset:0은
-   하단 safe area를 뺀 뷰포트 기준으로 계산되어 데드존이 생김(WebKit 254868/237961).
-   100vh만 콜드 스타트부터 화면 전체 높이를 반환하므로 body 크기는 100vh로 잡는다.
+   하단 safe area를 뺀 뷰포트 기준이라 데드존이 생기고(WebKit 254868/237961),
+   100vh는 반대로 safe area를 이중으로 더해 화면보다 커져 하단이 잘림(v22에서 확인).
+   → JS가 실제 화면 높이(screen.height)를 --apph로 넣어주고 그걸 쓴다.
    배경색 마스킹(html/body = --bg)은 안 먹는 iOS 버전 대비 안전망으로 유지 */
 html{height:100%; background:var(--bg)}
 body{position:fixed; top:0; left:0; width:100vw; height:100vh;
+  height:var(--apph, 100vh);
   display:flex; flex-direction:column; background:var(--bg)}
 header{flex:none; background:var(--bg);
   padding:calc(12px + env(safe-area-inset-top)) 18px 10px;
@@ -114,7 +116,7 @@ textarea{min-height:90px; resize:vertical}
 nav{flex:none; display:flex; gap:4px; background:var(--card);
   border-radius:999px; border:1px solid var(--line);
   box-shadow:0 4px 14px rgba(47,90,70,.14);
-  margin:8px 16px calc(12px + env(safe-area-inset-bottom));
+  margin:8px 16px calc(12px + max(env(safe-area-inset-bottom), var(--dead, 0px)));
   padding:6px 8px; z-index:20}
 nav button{flex:1; background:none; border:none; padding:7px 0 5px; color:var(--sub);
   font-size:11px; font-weight:600; display:flex; flex-direction:column; align-items:center;
@@ -144,7 +146,7 @@ body.kb nav{display:none}
 .sheet-bg.show{display:block}
 .sheet{position:fixed; left:0; right:0; bottom:0; background:var(--card); z-index:31;
   border-radius:22px 22px 0 0;
-  padding:20px 18px calc(20px + env(safe-area-inset-bottom));
+  padding:20px 18px calc(20px + max(env(safe-area-inset-bottom), var(--dead, 0px)));
   transform:translateY(100%); transition:transform .25s; max-height:80vh; overflow-y:auto}
 .sheet.show{transform:translateY(0)}
 .sheet h2{margin:0 0 4px; font-size:18px}
@@ -287,7 +289,7 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v22</div>
+  <div class="caption" style="text-align:center">앱 버전 v23</div>
 </div>
 
 <div class="lightbox" id="lightbox"><img alt=""></div>
@@ -525,16 +527,23 @@ function renderThemeRow(){
   if(saved && saved !== "sage") document.documentElement.dataset.theme = saved;
 }
 
-/* ===================== iOS 죽은 영역(--dead) 측정 ===================== */
-/* 단독실행 iOS에서 화면(screen.height)보다 뷰포트(innerHeight)가 짧으면 그 차이.
-   v22부터 레이아웃은 100vh 기준이라 보정에는 안 쓰고 진단용으로만 유지.
+/* ===================== iOS 화면 높이(--apph) / 죽은 영역(--dead) 측정 ===================== */
+/* 단독실행 iOS에서는 100%·inset:0은 짧고 100vh는 길게 계산되는 버그가 있어,
+   실제 화면 높이(screen 기준)를 --apph로 직접 넣어 body 높이로 쓴다.
+   --dead = 화면 높이 - 뷰포트(innerHeight) 차이. 탭바/시트를 그만큼 띄우는 데 사용.
    콜드 스타트 직후 뷰포트 값이 늦게 잡히는 버그 대비, 크기 변화 때마다 재측정 */
 function _setDead(){
-  let dead = 0;
-  if(navigator.standalone && screen && screen.height > window.innerHeight){
-    dead = Math.max(0, Math.min(100, screen.height - window.innerHeight));
+  let dead = 0, apph = "";
+  if(navigator.standalone && screen){
+    // iOS의 screen.width/height는 회전과 무관하게 세로 기준 고정값
+    const land = matchMedia("(orientation: landscape)").matches;
+    const sh = land ? Math.min(screen.width, screen.height) : Math.max(screen.width, screen.height);
+    dead = Math.max(0, Math.min(100, sh - window.innerHeight));
+    apph = sh + "px";
   }
   document.documentElement.style.setProperty("--dead", dead + "px");
+  if(apph) document.documentElement.style.setProperty("--apph", apph);
+  else document.documentElement.style.removeProperty("--apph");
 }
 _setDead();
 window.addEventListener("orientationchange", () => setTimeout(_setDead, 300));
