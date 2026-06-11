@@ -10,8 +10,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="일상 기록">
-<meta name="theme-color" content="#15201B" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#BDE8D9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#DCE9E1">
 <style>
 /* ---- 테마: 기본 = 세이지 (저채도 그린) ---- */
 :root{
@@ -34,27 +33,7 @@ html[data-theme=mono]{ --bg:#E9E7E4; --accent:#878D89; --btn-bg:#878D89;
   --line:#E8E6E3; --chip:#F0EFED; --field:#F8F7F6; --star-off:#E5E3E0;
   --shadow:0 3px 10px rgba(70,70,70,.07); }
 
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg:#171B19; --card:#222824; --text:#E5EBE7; --sub:#98A59E;
-    --accent:#9DC4AA; --line:#2E3531; --chip:#2A302C; --field:#1B201D;
-    --danger:#DB9C90; --star-off:#39423C;
-    --btn-bg:#9DC4AA; --btn-text:#171B19;
-    --shadow:none;
-  }
-  html[data-theme=lavender]{ --bg:#191822; --line:#2F2D3D; --chip:#2B2937;
-    --field:#1D1C27; --star-off:#3B3950; --shadow:none;
-    --accent:#B2ABD6; --btn-bg:#B2ABD6; }
-  html[data-theme=peach]{ --bg:#1F1A15; --line:#3A322A; --chip:#342D25;
-    --field:#241E18; --star-off:#473D32; --shadow:none;
-    --accent:#D3AE85; --btn-bg:#D3AE85; }
-  html[data-theme=sky]{ --bg:#161B1F; --line:#2C353C; --chip:#283036;
-    --field:#1A2024; --star-off:#374249; --shadow:none;
-    --accent:#9CBAD0; --btn-bg:#9CBAD0; }
-  html[data-theme=mono]{ --bg:#1A1A1A; --line:#323232; --chip:#2C2C2C;
-    --field:#1F1F1F; --star-off:#404040; --shadow:none;
-    --accent:#A6ACA8; --btn-bg:#A6ACA8; }
-}
+/* 다크모드에서도 항상 파스텔 바탕 유지 (사용자 선택) */
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
 html,body{margin:0; padding:0; background:var(--bg); color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
@@ -532,11 +511,21 @@ function renderThemeRow(){
 }
 
 /* ===================== 키보드 ↔ 하단 탭바 ===================== */
+/* 키보드가 화면을 줄이면(visualViewport) 탭바를 숨김 — 포커스 이벤트보다 확실함 */
+const _vv = window.visualViewport;
+function _kbOpen(){
+  return _vv ? (_vv.height < window.innerHeight - 120) : false;
+}
+if(_vv){
+  _vv.addEventListener("resize", () =>
+    document.body.classList.toggle("kb", _kbOpen()));
+}
 document.addEventListener("focusin", e => {
   if(e.target.matches("input, textarea, select")) document.body.classList.add("kb");
 });
 document.addEventListener("focusout", () => {
   setTimeout(() => {
+    if(_kbOpen()) return;
     if(!document.activeElement || !document.activeElement.matches("input, textarea, select"))
       document.body.classList.remove("kb");
   }, 50);
