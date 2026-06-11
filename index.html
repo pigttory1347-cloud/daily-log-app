@@ -10,97 +10,120 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="일상 기록">
-<meta name="theme-color" content="#1c1c1e" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#15201B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#BDE8D9" media="(prefers-color-scheme: light)">
 <style>
 :root{
-  --bg:#f2f2f7; --card:#ffffff; --text:#1c1c1e; --sub:#6e6e73;
-  --accent:#0a84ff; --line:#e3e3e8; --chip:#e9e9ee; --danger:#ff3b30;
-  --star:#ff9f0a;
+  --bg:#BDE8D9; --card:#ffffff; --text:#2E3A33; --sub:#7C9489;
+  --accent:#5FAE7B; --line:#E2F0E8; --chip:#EAF6EF; --field:#F2F9F5;
+  --danger:#E08A7E; --star:#F5B544; --star-off:#D6E8DD;
+  --btn-bg:#5FAE7B; --btn-text:#ffffff;
+  --shadow:0 3px 10px rgba(47,90,70,.10);
 }
 @media (prefers-color-scheme: dark){
   :root{
-    --bg:#000000; --card:#1c1c1e; --text:#f2f2f7; --sub:#98989f;
-    --accent:#0a84ff; --line:#2c2c2e; --chip:#2c2c2e; --danger:#ff453a;
+    --bg:#15201B; --card:#1F2D26; --text:#E6F2EA; --sub:#9DB5A8;
+    --accent:#8FD9A0; --line:#2F4237; --chip:#2A3A31; --field:#18241E;
+    --danger:#E89A8E; --star-off:#3A5044;
+    --btn-bg:#8FD9A0; --btn-text:#15201B;
+    --shadow:none;
   }
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
 html,body{margin:0; padding:0; background:var(--bg); color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
   font-size:16px; -webkit-text-size-adjust:100%}
-body{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 header{position:sticky; top:0; z-index:10; background:var(--bg);
-  padding:calc(10px + env(safe-area-inset-top)) 16px 8px;
+  padding:calc(12px + env(safe-area-inset-top)) 18px 10px;
   display:flex; align-items:center; justify-content:space-between}
-header h1{font-size:22px; margin:0; font-weight:700}
-header button{background:none; border:none; font-size:20px; color:var(--accent); padding:4px}
-main{padding:0 14px}
-.card{background:var(--card); border-radius:14px; padding:14px; margin-bottom:12px;
-  border:1px solid var(--line)}
-.chips{display:flex; gap:6px; overflow-x:auto; padding:2px 0 10px; -webkit-overflow-scrolling:touch}
+.htitle{display:flex; align-items:center; gap:10px}
+.htitle img{width:34px; height:34px; border-radius:10px; box-shadow:var(--shadow)}
+header h1{font-size:20px; margin:0; font-weight:800}
+header>button{background:var(--card); border:none; width:38px; height:38px;
+  border-radius:50%; font-size:17px; color:var(--accent); box-shadow:var(--shadow)}
+main{padding:2px 16px 0}
+.card{background:var(--card); border-radius:20px; padding:16px; margin-bottom:12px;
+  border:none; box-shadow:var(--shadow)}
+.chips{display:flex; gap:7px; overflow-x:auto; padding:2px 0 12px; -webkit-overflow-scrolling:touch}
 .chips::-webkit-scrollbar{display:none}
-.chip{flex:0 0 auto; padding:7px 14px; border-radius:18px; background:var(--chip);
+.chip{flex:0 0 auto; padding:8px 15px; border-radius:20px; background:var(--chip);
   border:none; font-size:14px; color:var(--text); white-space:nowrap}
-.chip.on{background:var(--accent); color:#fff; font-weight:600}
-label{display:block; font-size:13px; color:var(--sub); margin:10px 0 4px}
+.chip.on{background:var(--accent); color:var(--btn-text); font-weight:700}
+label{display:block; font-size:13px; color:var(--sub); margin:11px 2px 5px; font-weight:600}
 input[type=text],input[type=url],input[type=date],input[type=number],textarea,select{
-  width:100%; padding:11px 12px; border-radius:10px; border:1px solid var(--line);
-  background:var(--bg); color:var(--text); font-size:16px; font-family:inherit}
+  width:100%; padding:12px 13px; border-radius:13px; border:1.5px solid var(--line);
+  background:var(--field); color:var(--text); font-size:16px; font-family:inherit;
+  outline:none}
+input:focus,textarea:focus{border-color:var(--accent)}
 textarea{min-height:90px; resize:vertical}
-.btn{display:block; width:100%; padding:13px; border-radius:12px; border:none;
-  background:var(--accent); color:#fff; font-size:16px; font-weight:600; margin-top:14px}
+.btn{display:block; width:100%; padding:13px; border-radius:15px; border:none;
+  background:var(--btn-bg); color:var(--btn-text); font-size:16px; font-weight:700; margin-top:14px}
 .btn.secondary{background:var(--chip); color:var(--text)}
-.btn.danger{background:transparent; color:var(--danger); border:1px solid var(--line)}
+.btn.danger{background:transparent; color:var(--danger); border:1.5px solid var(--line)}
 .btn:active{opacity:.7}
 .row2{display:flex; gap:10px}
 .row2>div{flex:1}
 .stars{display:flex; gap:4px; padding:4px 0}
-.stars button{background:none; border:none; font-size:30px; color:var(--line); padding:0 2px}
+.stars button{background:none; border:none; font-size:30px; color:var(--star-off); padding:0 2px}
 .stars button.on{color:var(--star)}
 .rec-card{display:flex; gap:12px}
 .rec-thumb{flex:0 0 92px}
-.rec-thumb img{width:92px; height:64px; object-fit:cover; border-radius:8px}
+.rec-thumb img{width:92px; height:64px; object-fit:cover; border-radius:11px}
 .rec-body{flex:1; min-width:0}
-.rec-kind{font-size:12px; color:var(--accent); font-weight:600}
-.rec-title{font-weight:600; margin:2px 0; word-break:break-all}
+.rec-kind{display:inline-block; font-size:11px; color:var(--accent); font-weight:700;
+  background:var(--chip); padding:3px 10px; border-radius:9px; margin-bottom:3px}
+.rec-title{font-weight:700; margin:2px 0; word-break:break-all}
 .rec-star{color:var(--star); font-size:14px}
 .rec-sub{font-size:13px; color:var(--sub); margin:2px 0}
-.rec-memo{font-size:14px; margin:6px 0 0; white-space:pre-wrap; word-break:break-all}
-.rec-actions{display:flex; gap:14px; margin-top:8px; font-size:14px}
+.rec-memo{font-size:14px; margin:7px 0 0; white-space:pre-wrap; word-break:break-all;
+  background:var(--field); border-radius:11px; padding:9px 11px}
+.rec-actions{display:flex; gap:16px; margin-top:9px; font-size:14px}
 .rec-actions a,.rec-actions button{color:var(--accent); background:none; border:none;
-  font-size:14px; padding:0; text-decoration:none}
+  font-size:14px; font-weight:600; padding:0; text-decoration:none}
 .rec-actions button.del{color:var(--danger)}
-.empty{text-align:center; color:var(--sub); padding:34px 0; font-size:15px}
-.caption{font-size:13px; color:var(--sub); margin:6px 2px 12px}
+.empty{text-align:center; color:var(--sub); padding:36px 0; font-size:15px; line-height:1.7}
+.caption{font-size:13px; color:var(--sub); margin:7px 4px 12px; line-height:1.5}
 .diary-item{margin-bottom:10px}
-.diary-item summary{font-weight:600; padding:12px 14px; background:var(--card);
-  border:1px solid var(--line); border-radius:12px; list-style:none}
+.diary-item summary{font-weight:700; padding:13px 16px; background:var(--card);
+  border:none; border-radius:16px; list-style:none; box-shadow:var(--shadow)}
 .diary-item summary::-webkit-details-marker{display:none}
-.diary-item[open] summary{border-radius:12px 12px 0 0}
-.diary-item .diary-body{background:var(--card); border:1px solid var(--line); border-top:none;
-  border-radius:0 0 12px 12px; padding:12px 14px; white-space:pre-wrap; font-size:15px}
-nav{position:fixed; bottom:0; left:0; right:0; display:flex; background:var(--card);
-  border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom); z-index:20}
-nav button{flex:1; background:none; border:none; padding:9px 0 7px; color:var(--sub);
-  font-size:11px; display:flex; flex-direction:column; align-items:center; gap:2px}
-nav button .ico{font-size:22px; line-height:1}
-nav button.on{color:var(--accent)}
-.sheet-bg{position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:30; display:none}
+.diary-item[open] summary{border-radius:16px 16px 0 0}
+.diary-item .diary-body{background:var(--card); border-top:1.5px dashed var(--line);
+  border-radius:0 0 16px 16px; padding:13px 16px; white-space:pre-wrap; font-size:15px;
+  box-shadow:var(--shadow)}
+nav{position:fixed; bottom:0; left:0; right:0; display:flex; gap:4px; background:var(--card);
+  border-radius:22px 22px 0 0; box-shadow:0 -4px 16px rgba(47,90,70,.12);
+  padding:7px 10px calc(7px + env(safe-area-inset-bottom)); z-index:20}
+nav button{flex:1; background:none; border:none; padding:8px 0 6px; color:var(--sub);
+  font-size:11px; font-weight:600; display:flex; flex-direction:column; align-items:center;
+  gap:3px; border-radius:15px}
+nav button svg{width:23px; height:23px}
+nav button.on{color:var(--accent); background:var(--chip)}
+.sheet-bg{position:fixed; inset:0; background:rgba(20,40,30,.45); z-index:30; display:none}
 .sheet-bg.show{display:block}
 .sheet{position:fixed; left:0; right:0; bottom:0; background:var(--card); z-index:31;
-  border-radius:16px 16px 0 0; padding:18px 16px calc(20px + env(safe-area-inset-bottom));
+  border-radius:22px 22px 0 0; padding:20px 18px calc(22px + env(safe-area-inset-bottom));
   transform:translateY(100%); transition:transform .25s; max-height:80vh; overflow-y:auto}
 .sheet.show{transform:translateY(0)}
 .sheet h2{margin:0 0 4px; font-size:18px}
-h3{font-size:17px; margin:18px 2px 10px}
+h3{font-size:17px; margin:20px 4px 10px; font-weight:800}
 section{display:none}
 section.on{display:block}
+.toast{position:fixed; left:50%; bottom:calc(92px + env(safe-area-inset-bottom));
+  transform:translateX(-50%) translateY(8px); background:var(--text); color:var(--card);
+  padding:11px 20px; border-radius:22px; font-size:14px; font-weight:600;
+  opacity:0; transition:.25s; z-index:50; pointer-events:none; white-space:nowrap}
+.toast.show{opacity:1; transform:translateX(-50%)}
 </style>
 </head>
 <body>
 
 <header>
-  <h1 id="page-title">기록</h1>
+  <div class="htitle">
+    <img src="icon-192.png" alt="">
+    <h1 id="page-title">기록</h1>
+  </div>
   <button id="data-btn" aria-label="데이터 관리">⚙︎</button>
 </header>
 
@@ -184,9 +207,18 @@ section.on{display:block}
 </main>
 
 <nav>
-  <button data-tab="records" class="on"><span class="ico">✎</span>기록</button>
-  <button data-tab="diary"><span class="ico">☼</span>일기</button>
-  <button data-tab="search"><span class="ico">⌕</span>검색</button>
+  <button data-tab="records" class="on">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+    기록
+  </button>
+  <button data-tab="diary">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/></svg>
+    일기
+  </button>
+  <button data-tab="search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    검색
+  </button>
 </nav>
 
 <!-- 데이터 관리 시트 -->
@@ -396,6 +428,21 @@ async function tryFetchYtTitle(url){
   }catch(e){ return null; }
 }
 
+/* ===================== 토스트 ===================== */
+let toastTimer = null;
+function toast(msg){
+  let el = document.getElementById("toast");
+  if(!el){
+    el = document.createElement("div");
+    el.id = "toast"; el.className = "toast";
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 1800);
+}
+
 /* ===================== UI: 탭 ===================== */
 const TITLES = {records:"기록", diary:"일기", search:"검색"};
 document.querySelectorAll("nav button").forEach(btn => {
@@ -490,7 +537,7 @@ document.getElementById("f-save").addEventListener("click", () => {
   curRating = 0; renderStars();
   document.getElementById("f-url-hint").textContent = "붙여넣으면 썸네일은 자동, 제목은 인터넷 연결 시 자동으로 채워져요.";
   renderRecordList();
-  alert("저장했어요!");
+  toast("저장했어요! 🐢");
 });
 
 /* ===================== UI: 기록 목록 ===================== */
@@ -532,7 +579,7 @@ function renderRecordList(){
   const el = document.getElementById("record-list");
   el.innerHTML = rows.length
     ? rows.map(r => recordCardHTML(r, true)).join("")
-    : `<div class="empty">아직 기록이 없어요.<br>위에서 추가해 보세요.</div>`;
+    : `<div class="empty">🐢<br>아직 기록이 없어요.<br>위에서 추가해 보세요.</div>`;
 }
 document.getElementById("record-list").addEventListener("click", e => {
   const id = e.target.dataset && e.target.dataset.del;
@@ -557,7 +604,7 @@ document.getElementById("d-save").addEventListener("click", () => {
   if(!content){ alert("내용을 입력해 주세요."); return; }
   DB.diary[ds] = {content, updatedAt: Date.now()};
   save(); loadDiaryForm(); renderDiaryList();
-  alert("일기를 저장했어요!");
+  toast("일기를 저장했어요 🐢");
 });
 document.getElementById("d-del").addEventListener("click", () => {
   const ds = document.getElementById("d-date").value;
@@ -574,7 +621,7 @@ function renderDiaryList(){
         <summary>${ds} (${weekdayOf(ds)})</summary>
         <div class="diary-body">${esc(d.content)}</div>
       </details>`).join("")
-    : `<div class="empty">아직 일기가 없어요.</div>`;
+    : `<div class="empty">🐢<br>아직 일기가 없어요.</div>`;
 }
 
 /* ===================== UI: 검색 ===================== */
@@ -611,6 +658,11 @@ function runSearch(){
 }
 document.getElementById("s-go").addEventListener("click", runSearch);
 document.getElementById("s-q").addEventListener("keydown", e => { if(e.key === "Enter"){ e.target.blur(); runSearch(); } });
+let sTimer = null;
+document.getElementById("s-q").addEventListener("input", () => {
+  clearTimeout(sTimer);
+  sTimer = setTimeout(runSearch, 400);
+});
 
 /* ===================== 데이터 관리 ===================== */
 const sheet = document.getElementById("data-sheet");
@@ -660,7 +712,7 @@ document.getElementById("imp-file").addEventListener("change", async e => {
       for(const [ds, d] of Object.entries(data.diary)){
         if(!DB.diary[ds] || (d.updatedAt||0) > (DB.diary[ds].updatedAt||0)) DB.diary[ds] = d;
       }
-      alert(`기록 ${added}건을 합쳤어요.`);
+      toast(`기록 ${added}건을 합쳤어요 🐢`);
     }else{
       DB = {records:data.records, diary:data.diary};
       alert(`기록 ${data.records.length}건, 일기 ${Object.keys(data.diary).length}편으로 교체했어요.`);
