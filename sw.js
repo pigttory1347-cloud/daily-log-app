@@ -1,5 +1,5 @@
 /* 일상 기록 PWA — 오프라인 캐시 */
-const CACHE = "dailylog-v32";
+const CACHE = "dailylog-v33";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {
