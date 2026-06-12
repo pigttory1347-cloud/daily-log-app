@@ -290,7 +290,7 @@ section.on{display:block}
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
     검색
   </button>
-  <!-- 이스터 에그: 풋터를 5번 연속 탭하면 열림 -->
+  <!-- 이스터 에그: 풋터를 3번 연속 탭할 때마다 열림/숨김 토글 -->
   <button data-tab="exchange" id="tab-exchange" style="display:none">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m2 7 10 7L22 7"/></svg>
     교환
@@ -318,7 +318,7 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v29</div>
+  <div class="caption" style="text-align:center">앱 버전 v30</div>
 </div>
 
 <div class="lightbox" id="lightbox"><img alt=""></div>
@@ -1250,7 +1250,7 @@ document.getElementById("imp-file").addEventListener("change", async e => {
 });
 
 /* ===================== 교환일기 (이스터 에그) ===================== */
-/* 풋터(탭바 아래 문구)를 5번 연속 탭하면 교환 탭이 열린다 */
+/* 풋터(탭바 아래 문구)를 3번 연속 탭하면 교환 탭이 열리고, 다시 3번 탭하면 숨겨진다 */
 const X_UNLOCK_KEY = "dailylog_exchange_open";
 const X_NAME_KEY = "dailylog_exchange_name";
 function exchangeUnlocked(){ return localStorage.getItem(X_UNLOCK_KEY) === "1"; }
@@ -1260,15 +1260,23 @@ function showExchangeTab(){
 {
   let taps = 0, tapTimer = null;
   document.getElementById("app-footer").addEventListener("click", () => {
-    if(exchangeUnlocked()) return;
     taps++;
     clearTimeout(tapTimer);
     tapTimer = setTimeout(() => { taps = 0; }, 1200);
-    if(taps >= 5){
+    if(taps >= 3){
       taps = 0;
-      localStorage.setItem(X_UNLOCK_KEY, "1");
+      const open = !exchangeUnlocked();
+      localStorage.setItem(X_UNLOCK_KEY, open ? "1" : "0");
       showExchangeTab();
-      toast("🎁 비밀 교환일기장이 열렸어요!");
+      if(open){
+        toast("🎁 비밀 교환일기장이 열렸어요!");
+      }else{
+        // 교환 탭을 보고 있었다면 기록 탭으로 돌아간다 (일기는 그대로 보관됨)
+        if(document.getElementById("sec-exchange").classList.contains("on")){
+          document.querySelector('nav button[data-tab="records"]').click();
+        }
+        toast("🤫 교환일기장을 숨겼어요");
+      }
     }
   });
 }
