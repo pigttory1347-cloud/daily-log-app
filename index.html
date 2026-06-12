@@ -277,7 +277,7 @@ section.on{display:block}
   </button>
 </nav>
 
-<footer>🐢 오늘도 차곡차곡</footer>
+<footer id="app-footer">🐢 오늘도 차곡차곡</footer>
 
 <!-- 데이터 관리 시트 -->
 <div class="sheet-bg" id="sheet-bg"></div>
@@ -285,6 +285,10 @@ section.on{display:block}
   <h2>설정</h2>
   <div class="caption" style="margin-bottom:2px">테마 색</div>
   <div class="themes" id="theme-row"></div>
+  <div class="caption" style="margin:16px 4px 2px">하단 문구</div>
+  <input type="text" id="foot-input" maxlength="40" autocomplete="off"
+    placeholder="🐢 오늘도 차곡차곡">
+  <div class="caption" style="margin-top:6px">탭바 아래에 보이는 문구예요. 이모지도 돼요. 비워두면 표시되지 않아요.</div>
   <h2 style="margin-top:18px">데이터 관리</h2>
   <div class="caption" id="data-stats"></div>
   <button class="btn" id="exp-btn">내보내기 (JSON 백업)</button>
@@ -294,7 +298,7 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v26</div>
+  <div class="caption" style="text-align:center">앱 버전 v27</div>
 </div>
 
 <div class="lightbox" id="lightbox"><img alt=""></div>
@@ -530,6 +534,24 @@ function renderThemeRow(){
 {
   const saved = localStorage.getItem(THEME_KEY);
   if(saved && saved !== "sage") document.documentElement.dataset.theme = saved;
+}
+
+/* ===================== 하단 문구 (사용자 지정) ===================== */
+const FOOTER_KEY = "dailylog_footer";
+const FOOTER_DEFAULT = "🐢 오늘도 차곡차곡";
+function applyFooter(){
+  const saved = localStorage.getItem(FOOTER_KEY);
+  document.getElementById("app-footer").textContent = saved === null ? FOOTER_DEFAULT : saved;
+}
+{
+  const inp = document.getElementById("foot-input");
+  const saved = localStorage.getItem(FOOTER_KEY);
+  inp.value = saved === null ? FOOTER_DEFAULT : saved;
+  inp.addEventListener("input", () => {
+    localStorage.setItem(FOOTER_KEY, inp.value.trim());
+    applyFooter();
+  });
+  applyFooter();
 }
 
 /* ===================== iOS 죽은 영역(--dead) 측정 ===================== */
