@@ -175,12 +175,21 @@ section.on{display:block}
   display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;
   overflow:hidden; word-break:break-all}
 .tile .t-date{font-size:10px; color:var(--sub)}
-/* 타일 탭 → 상세 카드 오버레이 */
-.detail-bg{position:fixed; inset:0; background:rgba(20,40,30,.45); z-index:40;
-  display:none; align-items:flex-start; justify-content:center;
-  padding:28px 16px calc(28px + env(safe-area-inset-bottom)); overflow-y:auto}
+/* 타일 탭 → 상세 카드 오버레이 (화면 정중앙, safe area 회피) */
+.detail-bg{position:fixed; inset:0; background:rgba(20,40,30,.5); z-index:40;
+  display:none;
+  padding:calc(18px + env(safe-area-inset-top)) 14px calc(18px + env(safe-area-inset-bottom));
+  overflow-y:auto}
 .detail-bg.show{display:flex}
-#detail-card{width:100%; max-width:520px}
+#detail-card{width:100%; max-width:560px; margin:auto}  /* margin:auto = 세로·가로 중앙 */
+#detail-card .card{padding:20px; margin-bottom:0}
+#detail-card .rec-card{flex-direction:column; gap:14px}
+#detail-card .rec-thumb{flex:none}
+#detail-card .rec-thumb img{width:100%; height:auto; max-height:280px; object-fit:cover; border-radius:14px}
+#detail-card .rec-title{font-size:18px}
+#detail-card .rec-sub{font-size:14px}
+#detail-card .rec-memo{font-size:15px; line-height:1.6}
+#detail-card .rec-photos img{width:96px; height:96px}
 /* 첫 실행 닉네임 설정 화면 */
 .nick-modal{position:fixed; inset:0; background:var(--bg); z-index:70;
   display:none; align-items:center; justify-content:center; padding:24px}
@@ -358,7 +367,7 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v34</div>
+  <div class="caption" style="text-align:center">앱 버전 v35</div>
 </div>
 
 <!-- 첫 실행: 닉네임 정하기 -->
