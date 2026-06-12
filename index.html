@@ -181,6 +181,13 @@ section.on{display:block}
   padding:28px 16px calc(28px + env(safe-area-inset-bottom)); overflow-y:auto}
 .detail-bg.show{display:flex}
 #detail-card{width:100%; max-width:520px}
+/* 첫 실행 닉네임 설정 화면 */
+.nick-modal{position:fixed; inset:0; background:var(--bg); z-index:70;
+  display:none; align-items:center; justify-content:center; padding:24px}
+.nick-modal.show{display:flex}
+.nick-modal .card{width:100%; max-width:420px; text-align:center}
+.nick-modal h2{margin:4px 0 6px}
+.nick-modal input{text-align:center; margin-top:10px}
 .toast{position:fixed; left:50%; bottom:calc(92px + env(safe-area-inset-bottom));
   transform:translateX(-50%) translateY(8px); background:var(--text); color:var(--card);
   padding:11px 20px; border-radius:22px; font-size:14px; font-weight:600;
@@ -274,8 +281,7 @@ section.on{display:block}
   <section id="sec-exchange">
     <div class="card">
       <div class="caption" style="margin:0 4px 8px" data-i18n="x_caption">🤫 비밀의 교환일기장이에요. 일기를 쓰고 에어드랍으로 주고받아 보세요.</div>
-      <label data-i18n="lbl_my_name">내 이름</label>
-      <input type="text" id="x-author" maxlength="12" data-i18n-ph="ph_my_name" placeholder="예: 거북이">
+      <div class="caption" id="x-mynick" style="margin:0 4px 8px"></div>
       <label data-i18n="lbl_date">날짜</label>
       <input type="date" id="x-date">
       <label data-i18n="lbl_x_content">오늘의 교환일기</label>
@@ -291,6 +297,7 @@ section.on{display:block}
       <input type="file" id="x-file" accept=".json,application/json" style="display:none">
     </div>
     <h3 data-i18n="h_x_list">주고받은 일기</h3>
+    <div class="chips" id="x-authors"></div>
     <div id="x-list"></div>
   </section>
 
@@ -334,6 +341,8 @@ section.on{display:block}
   <h2 data-i18n="h_settings">설정</h2>
   <div class="caption" style="margin-bottom:2px" data-i18n="lbl_theme">테마 색</div>
   <div class="themes" id="theme-row"></div>
+  <div class="caption" style="margin:16px 4px 2px" data-i18n="lbl_nick">닉네임</div>
+  <input type="text" id="nick-set" maxlength="12" autocomplete="off">
   <div class="caption" style="margin:16px 4px 2px" data-i18n="lbl_lang">언어</div>
   <div class="chips" id="lang-row"></div>
   <div class="caption" style="margin:16px 4px 2px" data-i18n="lbl_footer">하단 문구</div>
@@ -349,7 +358,18 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v33</div>
+  <div class="caption" style="text-align:center">앱 버전 v34</div>
+</div>
+
+<!-- 첫 실행: 닉네임 정하기 -->
+<div class="nick-modal" id="nick-modal">
+  <div class="card">
+    <div style="font-size:40px">🐢</div>
+    <h2 data-i18n="nick_title">닉네임을 정해주세요</h2>
+    <div class="caption" data-i18n="nick_hint">교환일기에서 친구에게 보일 이름이에요. 나중에 설정에서 바꿀 수 있어요.</div>
+    <input type="text" id="nick-input" maxlength="12" autocomplete="off" data-i18n-ph="nick_ph" placeholder="예: 거북이">
+    <button class="btn" id="nick-save" data-i18n="nick_start">시작하기</button>
+  </div>
 </div>
 
 <div class="detail-bg" id="detail-bg"><div id="detail-card"></div></div>
@@ -433,6 +453,10 @@ ko: {
   confirm_import:"확인 = 기존 데이터에 합치기\n취소 = 기존 데이터를 지우고 덮어쓰기",
   toast_merged:"기록 {n}건을 합쳤어요 🐢", alert_replaced:"기록 {n}건, 일기 {m}편으로 교체했어요.",
   err_import:"가져오기 실패: ", err_format:"형식이 달라요",
+  nick_title:"닉네임을 정해주세요", nick_hint:"교환일기에서 친구에게 보일 이름이에요. 나중에 설정에서 바꿀 수 있어요.",
+  nick_ph:"예: 거북이", nick_start:"시작하기", nick_welcome:"반가워요, {n}! 🐢",
+  lbl_nick:"닉네임", x_me:"(나)", alert_need_nick:"닉네임을 입력해 주세요.",
+  x_my_nick:"내 닉네임: {n} — 설정에서 바꿀 수 있어요",
   theme_sage:"세이지", theme_lavender:"라벤더", theme_peach:"피치", theme_sky:"하늘", theme_mono:"모노",
 },
 en: {
@@ -480,6 +504,10 @@ en: {
   confirm_import:"OK = merge into existing data\nCancel = wipe and replace",
   toast_merged:"Merged {n} entries 🐢", alert_replaced:"Replaced with {n} entries and {m} diaries.",
   err_import:"Import failed: ", err_format:"Unrecognized format",
+  nick_title:"Pick a nickname", nick_hint:"This is the name friends see in the exchange diary. You can change it later in Settings.",
+  nick_ph:"e.g. Turtle", nick_start:"Get started", nick_welcome:"Nice to meet you, {n}! 🐢",
+  lbl_nick:"Nickname", x_me:"(me)", alert_need_nick:"Please enter a nickname.",
+  x_my_nick:"My nickname: {n} — change it in Settings",
   theme_sage:"Sage", theme_lavender:"Lavender", theme_peach:"Peach", theme_sky:"Sky", theme_mono:"Mono",
 },
 ja: {
@@ -527,6 +555,10 @@ ja: {
   confirm_import:"OK = 既存データに統合\nキャンセル = 消して置き換え",
   toast_merged:"記録{n}件を統合しました 🐢", alert_replaced:"記録{n}件・日記{m}件に置き換えました。",
   err_import:"取り込み失敗: ", err_format:"形式が違います",
+  nick_title:"ニックネームを決めてください", nick_hint:"交換日記で友だちに表示される名前です。あとで設定から変更できます。",
+  nick_ph:"例: かめ", nick_start:"はじめる", nick_welcome:"よろしくね、{n}！🐢",
+  lbl_nick:"ニックネーム", x_me:"（わたし）", alert_need_nick:"ニックネームを入力してください。",
+  x_my_nick:"わたしのニックネーム: {n} — 設定で変更できます",
   theme_sage:"セージ", theme_lavender:"ラベンダー", theme_peach:"ピーチ", theme_sky:"スカイ", theme_mono:"モノ",
 },
 zh: {
@@ -574,6 +606,10 @@ zh: {
   confirm_import:"确定 = 合并到现有数据\n取消 = 清空并替换",
   toast_merged:"已合并 {n} 条记录 🐢", alert_replaced:"已替换为 {n} 条记录、{m} 篇日记。",
   err_import:"导入失败: ", err_format:"格式不对",
+  nick_title:"取一个昵称吧", nick_hint:"这是交换日记中朋友看到的名字。之后可以在设置里修改。",
+  nick_ph:"例如: 小龟", nick_start:"开始使用", nick_welcome:"很高兴认识你，{n}！🐢",
+  lbl_nick:"昵称", x_me:"（我）", alert_need_nick:"请输入昵称。",
+  x_my_nick:"我的昵称: {n} — 可在设置中修改",
   theme_sage:"鼠尾草绿", theme_lavender:"薰衣草紫", theme_peach:"蜜桃", theme_sky:"天蓝", theme_mono:"灰调",
 },
 };
@@ -1638,7 +1674,9 @@ document.getElementById("imp-file").addEventListener("change", async e => {
 /* ===================== 교환일기 (이스터 에그) ===================== */
 /* 풋터(탭바 아래 문구)를 3번 연속 탭하면 교환 탭이 열리고, 다시 3번 탭하면 숨겨진다 */
 const X_UNLOCK_KEY = "dailylog_exchange_open";
-const X_NAME_KEY = "dailylog_exchange_name";
+const X_NAME_KEY = "dailylog_exchange_name";   // (구버전) 교환일기 이름 — 닉네임으로 이관
+const NICK_KEY = "dailylog_nick";
+function getNick(){ return (localStorage.getItem(NICK_KEY) || "").trim(); }
 function exchangeUnlocked(){ return localStorage.getItem(X_UNLOCK_KEY) === "1"; }
 function showExchangeTab(){
   document.getElementById("tab-exchange").style.display = exchangeUnlocked() ? "" : "none";
@@ -1667,16 +1705,33 @@ function showExchangeTab(){
   });
 }
 function newXId(){ return "x" + Date.now() + "-" + Math.random().toString(36).slice(2, 7); }
+let curXAuthor = "all";
 function renderExchangeList(){
+  const me = getNick();
+  document.getElementById("x-mynick").textContent = me ? TF("x_my_nick", {n: me}) : "";
   const wrap = document.getElementById("x-list");
-  wrap.innerHTML = "";
+  const chipsWrap = document.getElementById("x-authors");
+  wrap.innerHTML = ""; chipsWrap.innerHTML = "";
   const list = DB.exchange.slice().sort((a, b) =>
     (b.date || "").localeCompare(a.date || "") || (b.createdAt || 0) - (a.createdAt || 0));
   if(!list.length){
     wrap.innerHTML = `<div class="empty">${T("empty_x")}</div>`;
     return;
   }
-  for(const en of list){
+  // 닉네임별 정리: 작성자 칩으로 필터
+  const authors = [...new Set(list.map(en => en.author || T("anon")))];
+  if(curXAuthor !== "all" && !authors.includes(curXAuthor)) curXAuthor = "all";
+  if(authors.length > 1){
+    for(const a of ["all", ...authors]){
+      const b = document.createElement("button");
+      b.className = "chip" + (a === curXAuthor ? " on" : "");
+      b.textContent = a === "all" ? T("all") : a + (a === me ? " " + T("x_me") : "");
+      b.addEventListener("click", () => { curXAuthor = a; renderExchangeList(); });
+      chipsWrap.appendChild(b);
+    }
+  }
+  const rows = curXAuthor === "all" ? list : list.filter(en => (en.author || T("anon")) === curXAuthor);
+  for(const en of rows){
     const d = document.createElement("details"); d.className = "diary-item";
     const s = document.createElement("summary");
     s.textContent = `${en.date || "?"} · ${en.author || T("anon")}`;
@@ -1719,10 +1774,9 @@ function mergeExchange(entries){
   return added;
 }
 document.getElementById("x-save").addEventListener("click", async () => {
-  const author = document.getElementById("x-author").value.trim();
+  const author = getNick();
   const content = document.getElementById("x-content").value.trim();
   if(!content){ alert(T("alert_need_content")); return; }
-  if(author) localStorage.setItem(X_NAME_KEY, author);
   const photoIds = await xPhotos.commit();
   DB.exchange.push({
     id: newXId(),
@@ -1781,7 +1835,28 @@ document.getElementById("x-file").addEventListener("change", async e => {
 document.getElementById("f-date").value = todayStr();
 document.getElementById("d-date").value = todayStr();
 document.getElementById("x-date").value = todayStr();
-document.getElementById("x-author").value = localStorage.getItem(X_NAME_KEY) || "";
+{
+  // 구버전 교환일기 이름이 있으면 닉네임으로 이관
+  if(!getNick() && localStorage.getItem(X_NAME_KEY))
+    localStorage.setItem(NICK_KEY, localStorage.getItem(X_NAME_KEY).trim());
+  const inp = document.getElementById("nick-set");
+  inp.value = getNick();
+  inp.addEventListener("input", () => {
+    localStorage.setItem(NICK_KEY, inp.value.trim());
+    renderExchangeList();
+  });
+  // 첫 실행: 닉네임이 없으면 정하고 시작
+  if(!getNick()) document.getElementById("nick-modal").classList.add("show");
+  document.getElementById("nick-save").addEventListener("click", () => {
+    const v = document.getElementById("nick-input").value.trim();
+    if(!v){ alert(T("alert_need_nick")); return; }
+    localStorage.setItem(NICK_KEY, v);
+    inp.value = v;
+    document.getElementById("nick-modal").classList.remove("show");
+    renderExchangeList();
+    toast(TF("nick_welcome", {n: v}));
+  });
+}
 renderStars(); loadDiaryForm(); showExchangeTab(); syncThemeColorMeta();
 applyLang();  // 모든 문구·칩·목록을 현재 언어로 렌더링
 
