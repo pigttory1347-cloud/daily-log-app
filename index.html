@@ -56,7 +56,7 @@ header h1{font-size:20px; margin:0; font-weight:800}
 header>button{background:var(--card); border:none; width:44px; height:44px;
   border-radius:50%; font-size:24px; line-height:1; color:var(--accent); box-shadow:var(--shadow)}
 main{flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch;
-  padding:2px 16px 28px; background:var(--bg)}
+  padding:2px 16px 18px; background:var(--bg)}
 .card{background:var(--card); border-radius:20px; padding:16px; margin-bottom:12px;
   border:none; box-shadow:var(--shadow)}
 .chips{display:flex; gap:7px; overflow-x:auto; padding:2px 0 12px; -webkit-overflow-scrolling:touch}
@@ -115,17 +115,18 @@ textarea{min-height:90px; resize:vertical}
 nav{flex:none; display:flex; gap:4px; background:var(--card);
   border-radius:999px; border:1px solid var(--line);
   box-shadow:0 4px 14px rgba(47,90,70,.14);
-  margin:8px 16px 0;
+  margin:6px 16px 0;
   padding:6px 8px; z-index:20}
 nav button{flex:1; background:none; border:none; padding:7px 0 5px; color:var(--sub);
   font-size:11px; font-weight:600; display:flex; flex-direction:column; align-items:center;
   gap:2px; border-radius:999px}
 nav button svg{width:23px; height:23px}
 nav button.on{color:var(--accent); background:var(--chip)}
-/* 탭바 아래 풋터: 데드존 띠 바로 위에 앉는 한 줄 */
+/* 탭바 아래 풋터: 데드존 띠 바로 위에 앉는 한 줄.
+   홈 인디케이터 여백(34pt)을 다 쓰면 휑해서 14px 줄여 타이트하게 */
 footer{flex:none; text-align:center; font-size:11px; font-weight:600; color:var(--sub);
   letter-spacing:.03em;
-  padding:7px 0 calc(7px + max(0px, env(safe-area-inset-bottom) - var(--dead, 0px)))}
+  padding:5px 0 calc(4px + max(0px, env(safe-area-inset-bottom) - var(--dead, 0px) - 14px))}
 /* 키보드가 올라오면 하단 탭바 숨김 (iOS에서 키보드 위로 떠오르는 문제) */
 body.kb nav,body.kb footer{display:none}
 .themes{display:flex; gap:12px; padding:6px 2px 2px}
@@ -367,7 +368,7 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v36</div>
+  <div class="caption" style="text-align:center">앱 버전 v37</div>
 </div>
 
 <!-- 첫 실행: 닉네임 정하기 -->
