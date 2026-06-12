@@ -10,7 +10,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="일상 기록">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#DCE9E1">
 <style>
 /* ---- 테마: 기본 = 세이지 (저채도 그린) ---- */
 :root{
@@ -41,12 +41,12 @@ html,body{margin:0; padding:0; overflow:hidden;
   font-size:16px; -webkit-text-size-adjust:100%}
 /* 고정 레이아웃: 페이지는 안 움직이고 main 내부만 스크롤 → iOS 키보드 밀림 방지 */
 /* iOS 단독실행 한계(v22~v24 실측): 웹 렌더링은 뷰포트(innerHeight)까지만 합성되고
-   그 아래 ~59pt 띠는 iOS가 body 배경색으로만 칠한다. 어떤 CSS/JS로도 그 띠에는
-   그림을 못 그림. → 탭바를 바닥에 도킹하고 body 배경 = 카드색(흰색)으로 두면
-   iOS가 칠하는 띠가 탭바·시트의 연장으로 보여 이음새가 사라진다 */
+   그 아래 ~59pt 띠는 iOS가 body 배경색으로만 칠한다(웹에서는 못 그림).
+   → body 배경 = 화면 배경색으로 두고, 그 바로 위에 풋터 문구를 놓아
+   띠가 "풋터 아래 여백"처럼 자연스럽게 보이게 한다 */
 html{height:100%; background:var(--bg)}
 body{position:fixed; inset:0; display:flex; flex-direction:column;
-  background:var(--card)}
+  background:var(--bg)}
 header{flex:none; background:var(--bg);
   padding:calc(12px + env(safe-area-inset-top)) 18px 10px;
   display:flex; align-items:center; justify-content:space-between}
@@ -110,21 +110,24 @@ textarea{min-height:90px; resize:vertical}
 .diary-item .diary-body{background:var(--card); border-top:1.5px dashed var(--line);
   border-radius:0 0 16px 16px; padding:13px 16px; white-space:pre-wrap; font-size:15px;
   box-shadow:var(--shadow)}
-/* 도킹 탭바: 뷰포트 바닥까지 붙이고, 그 아래 iOS가 칠하는 띠(body 배경=카드색)가
-   탭바의 연장으로 보이게 한다. safe area에서 띠 높이(--dead)만큼 빼서 이중 여백 방지 */
+/* 플로팅 알약 탭바 + 풋터: 풋터 아래의 못 그리는 띠(--dead)는 배경색으로 칠해져
+   풋터의 여백처럼 보인다. safe area에서 띠 높이만큼 빼서 이중 여백 방지 */
 nav{flex:none; display:flex; gap:4px; background:var(--card);
-  border-radius:20px 20px 0 0;
-  box-shadow:0 -4px 14px rgba(47,90,70,.10);
-  margin:0;
-  padding:8px 14px calc(8px + max(0px, env(safe-area-inset-bottom) - var(--dead, 0px)));
-  z-index:20}
+  border-radius:999px; border:1px solid var(--line);
+  box-shadow:0 4px 14px rgba(47,90,70,.14);
+  margin:8px 16px 0;
+  padding:6px 8px; z-index:20}
 nav button{flex:1; background:none; border:none; padding:7px 0 5px; color:var(--sub);
   font-size:11px; font-weight:600; display:flex; flex-direction:column; align-items:center;
   gap:2px; border-radius:999px}
 nav button svg{width:23px; height:23px}
 nav button.on{color:var(--accent); background:var(--chip)}
+/* 탭바 아래 풋터: 데드존 띠 바로 위에 앉는 한 줄 */
+footer{flex:none; text-align:center; font-size:11px; font-weight:600; color:var(--sub);
+  letter-spacing:.03em;
+  padding:7px 0 calc(7px + max(0px, env(safe-area-inset-bottom) - var(--dead, 0px)))}
 /* 키보드가 올라오면 하단 탭바 숨김 (iOS에서 키보드 위로 떠오르는 문제) */
-body.kb nav{display:none}
+body.kb nav,body.kb footer{display:none}
 .themes{display:flex; gap:12px; padding:6px 2px 2px}
 .theme-dot{width:40px; height:40px; border-radius:50%; border:3px solid transparent; padding:0}
 .theme-dot.on{border-color:var(--text)}
@@ -274,6 +277,8 @@ section.on{display:block}
   </button>
 </nav>
 
+<footer>🐢 오늘도 차곡차곡</footer>
+
 <!-- 데이터 관리 시트 -->
 <div class="sheet-bg" id="sheet-bg"></div>
 <div class="sheet" id="data-sheet">
@@ -289,7 +294,7 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v25</div>
+  <div class="caption" style="text-align:center">앱 버전 v26</div>
 </div>
 
 <div class="lightbox" id="lightbox"><img alt=""></div>
@@ -498,9 +503,9 @@ const THEMES = [
 const THEME_KEY = "dailylog_theme";
 
 function syncThemeColorMeta(){
-  // 죽은 영역(탭바 아래)은 body 배경색으로 칠해짐 — 도킹 탭바와 같은 카드색으로 통일
-  const card = getComputedStyle(document.documentElement).getPropertyValue("--card").trim();
-  document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.content = card);
+  // 죽은 영역(풋터 아래)은 body 배경색으로 칠해짐 — 화면 배경색으로 통일
+  const bg = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim();
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.content = bg);
 }
 function applyTheme(name){
   if(name === "sage") delete document.documentElement.dataset.theme;
