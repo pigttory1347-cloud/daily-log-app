@@ -179,10 +179,10 @@ section.on{display:block}
     <div class="card">
       <div class="chips" id="kind-chips"></div>
 
-      <div id="f-url-wrap" style="display:none">
-        <label>YouTube URL</label>
+      <div id="f-url-wrap">
+        <label id="f-url-label">YouTube URL</label>
         <input type="url" id="f-url" placeholder="https://youtu.be/..." inputmode="url">
-        <div class="caption" id="f-url-hint">붙여넣으면 썸네일은 자동, 제목은 인터넷 연결 시 자동으로 채워져요.</div>
+        <div class="caption" id="f-url-hint">붙여넣으면 대표 이미지(썸네일)와 제목을 자동으로 채워줘요.</div>
       </div>
 
       <label id="f-title-label">제목</label>
@@ -196,11 +196,6 @@ section.on{display:block}
       <div id="f-ep-wrap" style="display:none">
         <label>회차</label>
         <input type="number" id="f-ep" min="1" max="999" value="1" inputmode="numeric">
-      </div>
-
-      <div id="f-link-wrap" style="display:none">
-        <label>링크 (선택)</label>
-        <input type="url" id="f-link" placeholder="관련 URL이 있다면" inputmode="url">
       </div>
 
       <div class="row2">
@@ -298,7 +293,7 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v27</div>
+  <div class="caption" style="text-align:center">앱 버전 v28</div>
 </div>
 
 <div class="lightbox" id="lightbox"><img alt=""></div>
@@ -493,6 +488,43 @@ async function tryFetchYtTitle(url){
     if(!r.ok) return null;
     const j = await r.json();
     return {title: j.title || "", channel: j.author_name || ""};
+  }catch(e){ return null; }
+}
+
+/* ===================== 일반 URL 대표 이미지(og:image) ===================== */
+/* 다른 사이트의 메타 태그는 CORS 때문에 직접 못 읽으므로 공개 프록시를 거친다.
+   하나가 막히거나 죽어 있을 수 있어 두 곳을 차례로 시도 */
+const META_PROXIES = [
+  u => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u),
+  u => "https://corsproxy.io/?url=" + encodeURIComponent(u),
+];
+async function _fetchViaProxies(url){
+  for(const make of META_PROXIES){
+    try{
+      const r = await fetch(make(url), {signal: AbortSignal.timeout(9000)});
+      if(r.ok) return await r.text();
+    }catch(e){}
+  }
+  return null;
+}
+async function tryFetchPageMeta(url){
+  try{
+    const html = await _fetchViaProxies(url);
+    if(!html) return null;
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const pick = sel => {
+      const el = doc.querySelector(sel);
+      return el ? (el.getAttribute("content") || "").trim() : "";
+    };
+    let thumb = pick('meta[property="og:image"]') || pick('meta[name="og:image"]')
+      || pick('meta[name="twitter:image"]') || pick('meta[property="twitter:image"]');
+    if(thumb){
+      thumb = new URL(thumb, url).href;            // 상대 경로 보정
+      thumb = thumb.replace(/^http:\/\//, "https://"); // 혼합 콘텐츠 차단 회피
+    }
+    const title = pick('meta[property="og:title"]')
+      || (doc.querySelector("title") ? doc.querySelector("title").textContent.trim() : "");
+    return {thumb: thumb || null, title: title || null};
   }catch(e){ return null; }
 }
 
@@ -815,9 +847,9 @@ function renderKindChips(){
   }
 }
 function applyKindForm(){
-  document.getElementById("f-url-wrap").style.display = curKind === "youtube" ? "" : "none";
+  document.getElementById("f-url-label").textContent = curKind === "youtube" ? "YouTube URL" : "링크 / URL (선택)";
+  document.getElementById("f-url").placeholder = curKind === "youtube" ? "https://youtu.be/..." : "https://...";
   document.getElementById("f-ep-wrap").style.display = curKind === "drama" ? "" : "none";
-  document.getElementById("f-link-wrap").style.display = (curKind === "youtube" || curKind === "drama") ? "none" : "";
   document.getElementById("f-creator-label").textContent = CREATOR_LABELS[curKind];
   document.getElementById("f-creator-wrap").style.display = curKind === "drama" ? "none" : "";
   document.getElementById("f-title").placeholder = curKind === "drama" ? "드라마 제목 (예: 폭싹 속았수다)" : "제목";
@@ -841,11 +873,12 @@ function setEditMode(on){
   document.getElementById("f-cancel-edit").style.display = on ? "" : "none";
 }
 function clearRecordForm(){
-  ["f-url","f-title","f-creator","f-link","f-memo"].forEach(id => document.getElementById(id).value = "");
+  ["f-url","f-title","f-creator","f-memo"].forEach(id => document.getElementById(id).value = "");
   document.getElementById("f-ep").value = 1;
   curRating = 0; renderStars();
   recPhotos.reset([]);
-  document.getElementById("f-url-hint").textContent = "붙여넣으면 썸네일은 자동, 제목은 인터넷 연결 시 자동으로 채워져요.";
+  urlMeta = {url: null, thumb: null};
+  document.getElementById("f-url-hint").textContent = "붙여넣으면 대표 이미지(썸네일)와 제목을 자동으로 채워줘요.";
 }
 function startEditRecord(id){
   const r = DB.records.find(x => x.id === id);
@@ -855,8 +888,9 @@ function startEditRecord(id){
   renderKindChips(); applyKindForm();
   document.getElementById("f-title").value = r.title || "";
   document.getElementById("f-creator").value = r.creator || "";
-  document.getElementById("f-url").value = r.kind === "youtube" ? (r.url || "") : "";
-  document.getElementById("f-link").value = (r.kind !== "youtube" && r.kind !== "drama") ? (r.url || "") : "";
+  document.getElementById("f-url").value = r.url || "";
+  // URL을 안 바꾸고 저장하면 기존 썸네일 유지
+  urlMeta = {url: r.url || null, thumb: r.thumbnail || null};
   const ep = parseInt(r.detail, 10);
   document.getElementById("f-ep").value = isNaN(ep) ? 1 : ep;
   if(r.date) document.getElementById("f-date").value = r.date;
@@ -871,21 +905,39 @@ document.getElementById("f-cancel-edit").addEventListener("click", () => {
   editingId = null; setEditMode(false); clearRecordForm();
 });
 
-let ytFetchTimer = null;
+let urlFetchTimer = null;
+let urlMeta = {url: null, thumb: null}; // 마지막으로 가져온 일반 URL의 대표 이미지
 document.getElementById("f-url").addEventListener("input", e => {
   const url = e.target.value.trim();
-  clearTimeout(ytFetchTimer);
-  if(!ytVideoId(url)) return;
-  ytFetchTimer = setTimeout(async () => {
+  clearTimeout(urlFetchTimer);
+  const isYt = !!ytVideoId(url);
+  if(!isYt && !/^https?:\/\/\S+\.\S+/i.test(url)) return;
+  urlFetchTimer = setTimeout(async () => {
     const hint = document.getElementById("f-url-hint");
-    hint.textContent = "영상 정보 가져오는 중...";
-    const meta = await tryFetchYtTitle(url);
-    if(meta){
-      if(!document.getElementById("f-title").value) document.getElementById("f-title").value = meta.title;
-      if(!document.getElementById("f-creator").value) document.getElementById("f-creator").value = meta.channel;
-      hint.textContent = "제목·채널을 자동으로 채웠어요.";
+    if(isYt){
+      hint.textContent = "영상 정보 가져오는 중...";
+      const meta = await tryFetchYtTitle(url);
+      if(meta){
+        if(!document.getElementById("f-title").value) document.getElementById("f-title").value = meta.title;
+        if(!document.getElementById("f-creator").value) document.getElementById("f-creator").value = meta.channel;
+        hint.textContent = "제목·채널을 자동으로 채웠어요.";
+      }else{
+        hint.textContent = "제목 자동 가져오기 실패 — 직접 입력해 주세요. (썸네일은 자동으로 저장돼요)";
+      }
+      return;
+    }
+    hint.textContent = "대표 이미지 가져오는 중...";
+    const meta = await tryFetchPageMeta(url);
+    if(meta && (meta.thumb || meta.title)){
+      urlMeta = {url, thumb: meta.thumb};
+      if(meta.title && !document.getElementById("f-title").value)
+        document.getElementById("f-title").value = meta.title;
+      hint.textContent = meta.thumb
+        ? "대표 이미지를 찾았어요 — 저장하면 썸네일로 보여요."
+        : "대표 이미지는 없는 페이지예요. 제목만 채웠어요.";
     }else{
-      hint.textContent = "제목 자동 가져오기 실패 — 직접 입력해 주세요. (썸네일은 자동으로 저장돼요)";
+      urlMeta = {url: null, thumb: null};
+      hint.textContent = "페이지 정보를 못 가져왔어요 — 링크는 그대로 저장돼요.";
     }
   }, 600);
 });
@@ -902,8 +954,9 @@ document.getElementById("f-save").addEventListener("click", async () => {
     title: title || "(제목 없음)",
     creator: document.getElementById("f-creator").value.trim() || null,
     detail: curKind === "drama" ? (document.getElementById("f-ep").value + "화") : null,
-    url: curKind === "youtube" ? (url || null) : (document.getElementById("f-link").value.trim() || null),
-    thumbnail: curKind === "youtube" ? ytThumb(url) : null,
+    url: url || null,
+    thumbnail: curKind === "youtube" ? ytThumb(url)
+      : (url && urlMeta.url === url ? urlMeta.thumb : null),
     rating: curRating || null,
     date: document.getElementById("f-date").value || todayStr(),
     memo: document.getElementById("f-memo").value.trim() || null,
