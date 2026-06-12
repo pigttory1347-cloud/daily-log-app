@@ -1,0 +1,19 @@
+{
+  "name": "dailylog-ios",
+  "private": true,
+  "version": "1.0.0",
+  "description": "일상 기록 — App Store용 iOS 래퍼 (Capacitor)",
+  "scripts": {
+    "copy-www": "node copy-www.mjs",
+    "ios:init": "npm run copy-www && npx cap add ios && npx cap sync ios",
+    "ios:sync": "npm run copy-www && npx cap sync ios",
+    "ios:open": "npx cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "^7",
+    "@capacitor/ios": "^7"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7"
+  }
+}
