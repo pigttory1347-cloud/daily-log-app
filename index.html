@@ -182,10 +182,10 @@ section.on{display:block}
       <div id="f-url-wrap">
         <label id="f-url-label">YouTube URL</label>
         <input type="url" id="f-url" placeholder="https://youtu.be/..." inputmode="url">
-        <div class="caption" id="f-url-hint">붙여넣으면 대표 이미지(썸네일)와 제목을 자동으로 채워줘요.</div>
+        <div class="caption" id="f-url-hint"></div>
       </div>
 
-      <label id="f-title-label">제목</label>
+      <label id="f-title-label" data-i18n="lbl_title">제목</label>
       <input type="text" id="f-title" placeholder="제목">
 
       <div id="f-creator-wrap">
@@ -194,34 +194,34 @@ section.on{display:block}
       </div>
 
       <div id="f-ep-wrap" style="display:none">
-        <label>회차</label>
+        <label data-i18n="lbl_ep">회차</label>
         <input type="number" id="f-ep" min="1" max="999" value="1" inputmode="numeric">
       </div>
 
       <div class="row2">
         <div>
-          <label>날짜</label>
+          <label data-i18n="lbl_date">날짜</label>
           <input type="date" id="f-date">
         </div>
         <div>
-          <label>별점</label>
+          <label data-i18n="lbl_rating">별점</label>
           <div class="stars" id="f-stars"></div>
         </div>
       </div>
 
-      <label>감상 / 메모</label>
-      <textarea id="f-memo" placeholder="뭐가 재밌었고 뭐가 감명깊었는지"></textarea>
+      <label data-i18n="lbl_memo">감상 / 메모</label>
+      <textarea id="f-memo" data-i18n-ph="ph_memo" placeholder="뭐가 재밌었고 뭐가 감명깊었는지"></textarea>
 
-      <label>사진 (선택)</label>
+      <label data-i18n="lbl_photos">사진 (선택)</label>
       <div class="photo-row" id="f-photos"></div>
-      <button class="btn secondary small" id="f-photo-btn">사진 추가</button>
+      <button class="btn secondary small" id="f-photo-btn" data-i18n="btn_add_photo">사진 추가</button>
       <input type="file" id="f-photo-input" accept="image/*" multiple style="display:none">
 
-      <button class="btn" id="f-save">저장</button>
-      <button class="btn secondary small" id="f-cancel-edit" style="display:none">수정 취소</button>
+      <button class="btn" id="f-save" data-i18n="btn_save">저장</button>
+      <button class="btn secondary small" id="f-cancel-edit" style="display:none" data-i18n="btn_cancel_edit">수정 취소</button>
     </div>
 
-    <h3>저장된 기록</h3>
+    <h3 data-i18n="h_records">저장된 기록</h3>
     <div class="chips" id="filter-chips"></div>
     <div id="record-list"></div>
   </section>
@@ -229,52 +229,52 @@ section.on{display:block}
   <!-- ===================== 일기 ===================== -->
   <section id="sec-diary">
     <div class="card">
-      <label>날짜</label>
+      <label data-i18n="lbl_date">날짜</label>
       <input type="date" id="d-date">
-      <label>오늘 하루</label>
-      <textarea id="d-content" style="min-height:160px"
+      <label data-i18n="lbl_today">오늘 하루</label>
+      <textarea id="d-content" style="min-height:160px" data-i18n-ph="ph_diary"
         placeholder="오늘 뭐 했고, 뭐가 좋았고, 뭐가 아쉬웠는지..."></textarea>
-      <label>사진 (선택)</label>
+      <label data-i18n="lbl_photos">사진 (선택)</label>
       <div class="photo-row" id="d-photos"></div>
-      <button class="btn secondary small" id="d-photo-btn">사진 추가</button>
+      <button class="btn secondary small" id="d-photo-btn" data-i18n="btn_add_photo">사진 추가</button>
       <input type="file" id="d-photo-input" accept="image/*" multiple style="display:none">
-      <button class="btn" id="d-save">저장</button>
-      <button class="btn danger" id="d-del" style="display:none">이 날짜 일기 삭제</button>
+      <button class="btn" id="d-save" data-i18n="btn_save">저장</button>
+      <button class="btn danger" id="d-del" style="display:none" data-i18n="btn_del_diary">이 날짜 일기 삭제</button>
     </div>
-    <h3>지난 일기</h3>
+    <h3 data-i18n="h_past_diary">지난 일기</h3>
     <div id="diary-list"></div>
   </section>
 
   <!-- ===================== 교환일기 (이스터 에그) ===================== -->
   <section id="sec-exchange">
     <div class="card">
-      <div class="caption" style="margin:0 4px 8px">🤫 비밀의 교환일기장이에요. 일기를 쓰고 에어드랍으로 주고받아 보세요.</div>
-      <label>내 이름</label>
-      <input type="text" id="x-author" maxlength="12" placeholder="예: 거북이">
-      <label>날짜</label>
+      <div class="caption" style="margin:0 4px 8px" data-i18n="x_caption">🤫 비밀의 교환일기장이에요. 일기를 쓰고 에어드랍으로 주고받아 보세요.</div>
+      <label data-i18n="lbl_my_name">내 이름</label>
+      <input type="text" id="x-author" maxlength="12" data-i18n-ph="ph_my_name" placeholder="예: 거북이">
+      <label data-i18n="lbl_date">날짜</label>
       <input type="date" id="x-date">
-      <label>오늘의 교환일기</label>
-      <textarea id="x-content" style="min-height:140px"
+      <label data-i18n="lbl_x_content">오늘의 교환일기</label>
+      <textarea id="x-content" style="min-height:140px" data-i18n-ph="ph_x_content"
         placeholder="친구에게 들려주고 싶은 오늘 이야기"></textarea>
-      <label>사진 (선택)</label>
+      <label data-i18n="lbl_photos">사진 (선택)</label>
       <div class="photo-row" id="x-photos"></div>
-      <button class="btn secondary small" id="x-photo-btn">사진 추가</button>
+      <button class="btn secondary small" id="x-photo-btn" data-i18n="btn_add_photo">사진 추가</button>
       <input type="file" id="x-photo-input" accept="image/*" multiple style="display:none">
-      <button class="btn" id="x-save">저장</button>
-      <button class="btn secondary small" id="x-share">📡 에어드랍으로 보내기</button>
-      <button class="btn secondary small" id="x-import">받은 교환일기 가져오기</button>
+      <button class="btn" id="x-save" data-i18n="btn_save">저장</button>
+      <button class="btn secondary small" id="x-share" data-i18n="btn_x_share">📡 에어드랍으로 보내기</button>
+      <button class="btn secondary small" id="x-import" data-i18n="btn_x_import">받은 교환일기 가져오기</button>
       <input type="file" id="x-file" accept=".json,application/json" style="display:none">
     </div>
-    <h3>주고받은 일기</h3>
+    <h3 data-i18n="h_x_list">주고받은 일기</h3>
     <div id="x-list"></div>
   </section>
 
   <!-- ===================== 검색 ===================== -->
   <section id="sec-search">
     <div class="card">
-      <input type="text" id="s-q" placeholder="지난주에 본 거 / 별 5개짜리 영화 / 어제 일기"
+      <input type="text" id="s-q" data-i18n-ph="ph_search" placeholder="지난주에 본 거 / 별 5개짜리 영화 / 어제 일기"
         autocomplete="off">
-      <button class="btn" id="s-go">검색</button>
+      <button class="btn" id="s-go" data-i18n="btn_search">검색</button>
     </div>
     <div class="caption" id="s-explain"></div>
     <div id="s-results"></div>
@@ -284,20 +284,20 @@ section.on{display:block}
 <nav>
   <button data-tab="records" class="on">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-    기록
+    <span data-i18n="nav_records">기록</span>
   </button>
   <button data-tab="diary">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/></svg>
-    일기
+    <span data-i18n="nav_diary">일기</span>
   </button>
   <button data-tab="search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-    검색
+    <span data-i18n="nav_search">검색</span>
   </button>
   <!-- 이스터 에그: 풋터를 3번 연속 탭할 때마다 열림/숨김 토글 -->
   <button data-tab="exchange" id="tab-exchange" style="display:none">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m2 7 10 7L22 7"/></svg>
-    교환
+    <span data-i18n="nav_exchange">교환</span>
   </button>
 </nav>
 
@@ -306,23 +306,25 @@ section.on{display:block}
 <!-- 데이터 관리 시트 -->
 <div class="sheet-bg" id="sheet-bg"></div>
 <div class="sheet" id="data-sheet">
-  <h2>설정</h2>
-  <div class="caption" style="margin-bottom:2px">테마 색</div>
+  <h2 data-i18n="h_settings">설정</h2>
+  <div class="caption" style="margin-bottom:2px" data-i18n="lbl_theme">테마 색</div>
   <div class="themes" id="theme-row"></div>
-  <div class="caption" style="margin:16px 4px 2px">하단 문구</div>
+  <div class="caption" style="margin:16px 4px 2px" data-i18n="lbl_lang">언어</div>
+  <div class="chips" id="lang-row"></div>
+  <div class="caption" style="margin:16px 4px 2px" data-i18n="lbl_footer">하단 문구</div>
   <input type="text" id="foot-input" maxlength="40" autocomplete="off"
     placeholder="🐢 오늘도 차곡차곡">
-  <div class="caption" style="margin-top:6px">탭바 아래에 보이는 문구예요. 이모지도 돼요. 비워두면 표시되지 않아요.</div>
-  <h2 style="margin-top:18px">데이터 관리</h2>
+  <div class="caption" style="margin-top:6px" data-i18n="footer_hint">탭바 아래에 보이는 문구예요. 이모지도 돼요. 비워두면 표시되지 않아요.</div>
+  <h2 style="margin-top:18px" data-i18n="h_data">데이터 관리</h2>
   <div class="caption" id="data-stats"></div>
-  <button class="btn" id="exp-btn">내보내기 (JSON 백업)</button>
-  <button class="btn secondary" id="imp-btn">가져오기 (JSON)</button>
+  <button class="btn" id="exp-btn" data-i18n="btn_export">내보내기 (JSON 백업)</button>
+  <button class="btn secondary" id="imp-btn" data-i18n="btn_import">가져오기 (JSON)</button>
   <input type="file" id="imp-file" accept=".json,application/json" style="display:none">
-  <div class="caption" style="margin-top:14px">
+  <div class="caption" style="margin-top:14px" data-i18n="data_note">
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v31</div>
+  <div class="caption" style="text-align:center">앱 버전 v32</div>
 </div>
 
 <div class="lightbox" id="lightbox"><img alt=""></div>
@@ -348,16 +350,251 @@ function save(){ localStorage.setItem(LS_KEY, JSON.stringify(DB)); }
 if(navigator.storage && navigator.storage.persist){ navigator.storage.persist(); }
 
 /* ===================== 상수 ===================== */
-const KINDS = {youtube:"유튜브", drama:"드라마", movie:"영화", book:"책", paper:"논문", etc:"기타"};
-const CREATOR_LABELS = {youtube:"채널", drama:"방송사/플랫폼", movie:"감독", book:"저자", paper:"저자/학회", etc:"만든이"};
+const KIND_KEYS = ["youtube", "drama", "movie", "book", "paper", "etc"];
 const STAR = n => "★".repeat(n);
 const todayStr = () => {
   const t = new Date();
   return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")}`;
 };
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const WEEKDAYS = "월화수목금토일";
-const weekdayOf = ds => WEEKDAYS[(new Date(ds+"T00:00:00").getDay()+6)%7];
+const weekdayOf = ds => T("weekdays")[(new Date(ds+"T00:00:00").getDay()+6)%7];
+
+/* ===================== 다국어 (i18n) ===================== */
+const L10N = {
+ko: {
+  weekdays: ["월","화","수","목","금","토","일"],
+  nav_records:"기록", nav_diary:"일기", nav_search:"검색", nav_exchange:"교환",
+  title_records:"기록", title_diary:"일기", title_search:"검색", title_exchange:"교환일기",
+  kind_youtube:"유튜브", kind_drama:"드라마", kind_movie:"영화", kind_book:"책", kind_paper:"논문", kind_etc:"기타", kind_diary:"일기", all:"전체",
+  creator_youtube:"채널", creator_drama:"방송사/플랫폼", creator_movie:"감독", creator_book:"저자", creator_paper:"저자/학회", creator_etc:"만든이",
+  lbl_url_generic:"링크 / URL (선택)",
+  url_hint:"붙여넣으면 대표 이미지(썸네일)와 제목을 자동으로 채워줘요.",
+  url_fetching_video:"영상 정보 가져오는 중...", url_filled_video:"제목·채널을 자동으로 채웠어요.",
+  url_fail_video:"제목 자동 가져오기 실패 — 직접 입력해 주세요. (썸네일은 자동으로 저장돼요)",
+  url_fetching_meta:"대표 이미지 가져오는 중...", url_found_thumb:"대표 이미지를 찾았어요 — 저장하면 썸네일로 보여요.",
+  url_no_thumb:"대표 이미지가 없어 썸네일 없이 저장돼요.", url_fail_meta:"페이지 정보를 못 가져왔어요 — 썸네일 없이 링크만 저장돼요.",
+  lbl_title:"제목", ph_title:"제목", ph_title_drama:"드라마 제목 (예: 폭싹 속았수다)",
+  lbl_ep:"회차", ep_fmt:"{n}화",
+  lbl_date:"날짜", lbl_rating:"별점", lbl_memo:"감상 / 메모", ph_memo:"뭐가 재밌었고 뭐가 감명깊었는지",
+  lbl_photos:"사진 (선택)", btn_add_photo:"사진 추가", toast_photo_fail:"사진 처리에 실패했어요",
+  btn_save:"저장", btn_save_edit:"수정 저장", btn_cancel_edit:"수정 취소",
+  h_records:"저장된 기록", empty_records:"🐢<br>아직 기록이 없어요.<br>위에서 추가해 보세요.",
+  rec_prefix:"기록: ", act_open:"열기", act_edit:"수정", act_del:"삭제",
+  confirm_del_record:"이 기록을 삭제할까요?", toast_saved:"저장했어요! 🐢", toast_edited:"수정했어요! 🐢",
+  toast_editing:"수정 중 — 고치고 '수정 저장'을 누르세요",
+  alert_need_url_title:"URL이나 제목을 입력해 주세요.", alert_need_title:"제목을 입력해 주세요.", no_title:"(제목 없음)",
+  lbl_today:"오늘 하루", ph_diary:"오늘 뭐 했고, 뭐가 좋았고, 뭐가 아쉬웠는지...",
+  btn_del_diary:"이 날짜 일기 삭제", h_past_diary:"지난 일기", empty_diary:"🐢<br>아직 일기가 없어요.",
+  toast_diary_saved:"일기를 저장했어요 🐢", confirm_del_diary:"이 날짜의 일기를 삭제할까요?",
+  alert_need_date:"날짜를 선택해 주세요.", alert_need_content:"내용을 입력해 주세요.",
+  x_caption:"🤫 비밀의 교환일기장이에요. 일기를 쓰고 에어드랍으로 주고받아 보세요.",
+  lbl_my_name:"내 이름", ph_my_name:"예: 거북이", lbl_x_content:"오늘의 교환일기", ph_x_content:"친구에게 들려주고 싶은 오늘 이야기",
+  btn_x_share:"📡 에어드랍으로 보내기", btn_x_import:"받은 교환일기 가져오기", h_x_list:"주고받은 일기",
+  empty_x:"아직 주고받은 일기가 없어요.<br>한 편 쓰고 에어드랍으로 보내보세요 ✉️", anon:"이름 없음",
+  toast_x_saved:"교환일기를 저장했어요 ✉️", toast_x_received:"교환일기 {n}편이 도착했어요 💌", toast_x_none:"새로운 일기가 없었어요",
+  confirm_del_x:"이 일기를 삭제할까요?", alert_x_empty:"보낼 일기가 없어요. 먼저 한 편 써보세요!",
+  err_x_file:"교환일기 파일이 아니에요", toast_x_open:"🎁 비밀 교환일기장이 열렸어요!", toast_x_hidden:"🤫 교환일기장을 숨겼어요", x_fname:"교환일기",
+  ph_search:"지난주에 본 거 / 별 5개짜리 영화 / 어제 일기", btn_search:"검색",
+  s_understood:"이렇게 이해했어요 → ", s_no_parse:"기간·종류 표현을 못 찾아서 전체에서 검색했어요.",
+  s_results:"결과 — 총 {n}건", s_none:"결과가 없어요.", s_period:"기간 {a} ~ {b}", s_rating:"별점 {n} 이상", s_only:"{k}만", s_kw:"키워드: ",
+  h_settings:"설정", lbl_theme:"테마 색", lbl_lang:"언어", lbl_footer:"하단 문구",
+  footer_hint:"탭바 아래에 보이는 문구예요. 이모지도 돼요. 비워두면 표시되지 않아요.", footer_default:"🐢 오늘도 차곡차곡",
+  h_data:"데이터 관리", data_stats:"기록 {n}건 · 일기 {m}편 저장돼 있어요.",
+  btn_export:"내보내기 (JSON 백업)", btn_import:"가져오기 (JSON)",
+  data_note:"모든 데이터는 이 폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니 가끔 \"내보내기\"로 백업해 두세요.",
+  backup_fname:"일상기록-백업",
+  confirm_import:"확인 = 기존 데이터에 합치기\n취소 = 기존 데이터를 지우고 덮어쓰기",
+  toast_merged:"기록 {n}건을 합쳤어요 🐢", alert_replaced:"기록 {n}건, 일기 {m}편으로 교체했어요.",
+  err_import:"가져오기 실패: ", err_format:"형식이 달라요",
+  theme_sage:"세이지", theme_lavender:"라벤더", theme_peach:"피치", theme_sky:"하늘", theme_mono:"모노",
+},
+en: {
+  weekdays: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+  nav_records:"Log", nav_diary:"Diary", nav_search:"Search", nav_exchange:"Swap",
+  title_records:"Log", title_diary:"Diary", title_search:"Search", title_exchange:"Exchange Diary",
+  kind_youtube:"YouTube", kind_drama:"Drama", kind_movie:"Movie", kind_book:"Book", kind_paper:"Paper", kind_etc:"Other", kind_diary:"Diary", all:"All",
+  creator_youtube:"Channel", creator_drama:"Network/Platform", creator_movie:"Director", creator_book:"Author", creator_paper:"Authors/Venue", creator_etc:"Creator",
+  lbl_url_generic:"Link / URL (optional)",
+  url_hint:"Paste a URL to auto-fill the thumbnail and title.",
+  url_fetching_video:"Fetching video info...", url_filled_video:"Title & channel filled in.",
+  url_fail_video:"Couldn't fetch the title — please type it. (Thumbnail is saved automatically)",
+  url_fetching_meta:"Fetching preview image...", url_found_thumb:"Preview image found — it will show as a thumbnail.",
+  url_no_thumb:"No preview image on this page — saving without a thumbnail.", url_fail_meta:"Couldn't read the page — saving the link without a thumbnail.",
+  lbl_title:"Title", ph_title:"Title", ph_title_drama:"Drama title",
+  lbl_ep:"Episode", ep_fmt:"Ep. {n}",
+  lbl_date:"Date", lbl_rating:"Rating", lbl_memo:"Notes", ph_memo:"What was fun or memorable?",
+  lbl_photos:"Photos (optional)", btn_add_photo:"Add photos", toast_photo_fail:"Failed to process the photo",
+  btn_save:"Save", btn_save_edit:"Save changes", btn_cancel_edit:"Cancel editing",
+  h_records:"Saved entries", empty_records:"🐢<br>Nothing here yet.<br>Add something above.",
+  rec_prefix:"Logged: ", act_open:"Open", act_edit:"Edit", act_del:"Delete",
+  confirm_del_record:"Delete this entry?", toast_saved:"Saved! 🐢", toast_edited:"Updated! 🐢",
+  toast_editing:"Editing — make changes and tap 'Save changes'",
+  alert_need_url_title:"Please enter a URL or a title.", alert_need_title:"Please enter a title.", no_title:"(untitled)",
+  lbl_today:"Your day", ph_diary:"What did you do, what was good, what was disappointing...",
+  btn_del_diary:"Delete this day's diary", h_past_diary:"Past diaries", empty_diary:"🐢<br>No diary entries yet.",
+  toast_diary_saved:"Diary saved 🐢", confirm_del_diary:"Delete the diary for this date?",
+  alert_need_date:"Please pick a date.", alert_need_content:"Please write something.",
+  x_caption:"🤫 A secret exchange diary. Write entries and swap them over AirDrop.",
+  lbl_my_name:"My name", ph_my_name:"e.g. Turtle", lbl_x_content:"Today's exchange entry", ph_x_content:"A story you want to share with your friend",
+  btn_x_share:"📡 Send via AirDrop", btn_x_import:"Import received diary", h_x_list:"Shared entries",
+  empty_x:"No shared entries yet.<br>Write one and send it via AirDrop ✉️", anon:"No name",
+  toast_x_saved:"Exchange entry saved ✉️", toast_x_received:"{n} entries arrived 💌", toast_x_none:"No new entries",
+  confirm_del_x:"Delete this entry?", alert_x_empty:"Nothing to send yet. Write one first!",
+  err_x_file:"Not an exchange diary file", toast_x_open:"🎁 The secret exchange diary is open!", toast_x_hidden:"🤫 Exchange diary hidden", x_fname:"exchange-diary",
+  ph_search:"watched last week / 5-star movies / yesterday's diary", btn_search:"Search",
+  s_understood:"Understood as → ", s_no_parse:"No date/type found — searching everything.",
+  s_results:"Results — {n} total", s_none:"No results.", s_period:"Period {a} ~ {b}", s_rating:"{n}+ stars", s_only:"{k} only", s_kw:"Keywords: ",
+  h_settings:"Settings", lbl_theme:"Theme", lbl_lang:"Language", lbl_footer:"Footer text",
+  footer_hint:"Shown under the tab bar. Emoji welcome. Leave empty to hide.", footer_default:"🐢 One day at a time",
+  h_data:"Data", data_stats:"{n} entries · {m} diaries stored.",
+  btn_export:"Export (JSON backup)", btn_import:"Import (JSON)",
+  data_note:"All data lives only on this phone. It disappears if you switch phones or delete the app, so export a backup now and then.",
+  backup_fname:"daily-log-backup",
+  confirm_import:"OK = merge into existing data\nCancel = wipe and replace",
+  toast_merged:"Merged {n} entries 🐢", alert_replaced:"Replaced with {n} entries and {m} diaries.",
+  err_import:"Import failed: ", err_format:"Unrecognized format",
+  theme_sage:"Sage", theme_lavender:"Lavender", theme_peach:"Peach", theme_sky:"Sky", theme_mono:"Mono",
+},
+ja: {
+  weekdays: ["月","火","水","木","金","土","日"],
+  nav_records:"記録", nav_diary:"日記", nav_search:"検索", nav_exchange:"交換",
+  title_records:"記録", title_diary:"日記", title_search:"検索", title_exchange:"交換日記",
+  kind_youtube:"YouTube", kind_drama:"ドラマ", kind_movie:"映画", kind_book:"本", kind_paper:"論文", kind_etc:"その他", kind_diary:"日記", all:"すべて",
+  creator_youtube:"チャンネル", creator_drama:"放送局/配信", creator_movie:"監督", creator_book:"著者", creator_paper:"著者/学会", creator_etc:"作り手",
+  lbl_url_generic:"リンク / URL（任意）",
+  url_hint:"URLを貼ると代表画像（サムネイル）とタイトルを自動で入力します。",
+  url_fetching_video:"動画情報を取得中...", url_filled_video:"タイトルとチャンネルを自動入力しました。",
+  url_fail_video:"タイトルを取得できませんでした — 手動で入力してください。（サムネイルは自動保存されます）",
+  url_fetching_meta:"代表画像を取得中...", url_found_thumb:"代表画像が見つかりました — 保存するとサムネイルになります。",
+  url_no_thumb:"代表画像がないため、サムネイルなしで保存されます。", url_fail_meta:"ページ情報を取得できませんでした — サムネイルなしでリンクのみ保存します。",
+  lbl_title:"タイトル", ph_title:"タイトル", ph_title_drama:"ドラマのタイトル",
+  lbl_ep:"話数", ep_fmt:"{n}話",
+  lbl_date:"日付", lbl_rating:"評価", lbl_memo:"感想 / メモ", ph_memo:"何が面白くて、何が心に残ったか",
+  lbl_photos:"写真（任意）", btn_add_photo:"写真を追加", toast_photo_fail:"写真の処理に失敗しました",
+  btn_save:"保存", btn_save_edit:"変更を保存", btn_cancel_edit:"編集をやめる",
+  h_records:"保存した記録", empty_records:"🐢<br>まだ記録がありません。<br>上から追加してみてください。",
+  rec_prefix:"記録: ", act_open:"開く", act_edit:"編集", act_del:"削除",
+  confirm_del_record:"この記録を削除しますか？", toast_saved:"保存しました！🐢", toast_edited:"更新しました！🐢",
+  toast_editing:"編集中 — 直して「変更を保存」を押してください",
+  alert_need_url_title:"URLかタイトルを入力してください。", alert_need_title:"タイトルを入力してください。", no_title:"（無題）",
+  lbl_today:"今日一日", ph_diary:"今日何をして、何が良くて、何が残念だったか...",
+  btn_del_diary:"この日の日記を削除", h_past_diary:"これまでの日記", empty_diary:"🐢<br>まだ日記がありません。",
+  toast_diary_saved:"日記を保存しました 🐢", confirm_del_diary:"この日付の日記を削除しますか？",
+  alert_need_date:"日付を選んでください。", alert_need_content:"内容を入力してください。",
+  x_caption:"🤫 秘密の交換日記です。日記を書いてAirDropで交換しましょう。",
+  lbl_my_name:"わたしの名前", ph_my_name:"例: かめ", lbl_x_content:"今日の交換日記", ph_x_content:"友だちに聞かせたい今日の話",
+  btn_x_share:"📡 AirDropで送る", btn_x_import:"受け取った日記を取り込む", h_x_list:"交換した日記",
+  empty_x:"まだ交換した日記がありません。<br>一つ書いてAirDropで送ってみましょう ✉️", anon:"名無し",
+  toast_x_saved:"交換日記を保存しました ✉️", toast_x_received:"日記が{n}件届きました 💌", toast_x_none:"新しい日記はありませんでした",
+  confirm_del_x:"この日記を削除しますか？", alert_x_empty:"送る日記がありません。まず一つ書いてみましょう！",
+  err_x_file:"交換日記のファイルではありません", toast_x_open:"🎁 秘密の交換日記が開きました！", toast_x_hidden:"🤫 交換日記を隠しました", x_fname:"交換日記",
+  ph_search:"先週見たもの / 星5の映画 / 昨日の日記", btn_search:"検索",
+  s_understood:"こう理解しました → ", s_no_parse:"期間・種類が見つからず、全体から検索しました。",
+  s_results:"結果 — 全{n}件", s_none:"結果がありません。", s_period:"期間 {a} ~ {b}", s_rating:"星{n}以上", s_only:"{k}のみ", s_kw:"キーワード: ",
+  h_settings:"設定", lbl_theme:"テーマカラー", lbl_lang:"言語", lbl_footer:"フッターの文字",
+  footer_hint:"タブバーの下に表示されます。絵文字もOK。空にすると非表示になります。", footer_default:"🐢 今日もこつこつ",
+  h_data:"データ管理", data_stats:"記録{n}件・日記{m}件を保存しています。",
+  btn_export:"書き出し（JSONバックアップ）", btn_import:"取り込み（JSON）",
+  data_note:"すべてのデータはこの端末にのみ保存されます。機種変更やアプリ削除で消えるので、ときどき書き出してバックアップしてください。",
+  backup_fname:"日常記録バックアップ",
+  confirm_import:"OK = 既存データに統合\nキャンセル = 消して置き換え",
+  toast_merged:"記録{n}件を統合しました 🐢", alert_replaced:"記録{n}件・日記{m}件に置き換えました。",
+  err_import:"取り込み失敗: ", err_format:"形式が違います",
+  theme_sage:"セージ", theme_lavender:"ラベンダー", theme_peach:"ピーチ", theme_sky:"スカイ", theme_mono:"モノ",
+},
+zh: {
+  weekdays: ["一","二","三","四","五","六","日"],
+  nav_records:"记录", nav_diary:"日记", nav_search:"搜索", nav_exchange:"交换",
+  title_records:"记录", title_diary:"日记", title_search:"搜索", title_exchange:"交换日记",
+  kind_youtube:"YouTube", kind_drama:"电视剧", kind_movie:"电影", kind_book:"书", kind_paper:"论文", kind_etc:"其他", kind_diary:"日记", all:"全部",
+  creator_youtube:"频道", creator_drama:"电视台/平台", creator_movie:"导演", creator_book:"作者", creator_paper:"作者/会议", creator_etc:"创作者",
+  lbl_url_generic:"链接 / URL（可选）",
+  url_hint:"粘贴URL后会自动填入封面图（缩略图）和标题。",
+  url_fetching_video:"正在获取视频信息...", url_filled_video:"已自动填入标题和频道。",
+  url_fail_video:"获取标题失败 — 请手动输入。（缩略图会自动保存）",
+  url_fetching_meta:"正在获取封面图...", url_found_thumb:"找到封面图 — 保存后将显示为缩略图。",
+  url_no_thumb:"该页面没有封面图，将不带缩略图保存。", url_fail_meta:"无法读取页面信息 — 仅保存链接，不带缩略图。",
+  lbl_title:"标题", ph_title:"标题", ph_title_drama:"剧名",
+  lbl_ep:"集数", ep_fmt:"第{n}集",
+  lbl_date:"日期", lbl_rating:"评分", lbl_memo:"感想 / 备注", ph_memo:"哪里有趣、哪里让你印象深刻",
+  lbl_photos:"照片（可选）", btn_add_photo:"添加照片", toast_photo_fail:"照片处理失败",
+  btn_save:"保存", btn_save_edit:"保存修改", btn_cancel_edit:"取消编辑",
+  h_records:"已保存的记录", empty_records:"🐢<br>还没有记录。<br>从上面添加一条吧。",
+  rec_prefix:"记录: ", act_open:"打开", act_edit:"编辑", act_del:"删除",
+  confirm_del_record:"删除这条记录吗？", toast_saved:"已保存！🐢", toast_edited:"已更新！🐢",
+  toast_editing:"编辑中 — 修改后点「保存修改」",
+  alert_need_url_title:"请输入URL或标题。", alert_need_title:"请输入标题。", no_title:"（无标题）",
+  lbl_today:"今天一天", ph_diary:"今天做了什么、有什么开心的、有什么遗憾的...",
+  btn_del_diary:"删除这天的日记", h_past_diary:"过去的日记", empty_diary:"🐢<br>还没有日记。",
+  toast_diary_saved:"日记已保存 🐢", confirm_del_diary:"删除这个日期的日记吗？",
+  alert_need_date:"请选择日期。", alert_need_content:"请输入内容。",
+  x_caption:"🤫 这是秘密交换日记。写好后用隔空投送(AirDrop)互相交换吧。",
+  lbl_my_name:"我的名字", ph_my_name:"例如: 小龟", lbl_x_content:"今天的交换日记", ph_x_content:"想讲给朋友听的今天的故事",
+  btn_x_share:"📡 用隔空投送发送", btn_x_import:"导入收到的日记", h_x_list:"交换过的日记",
+  empty_x:"还没有交换过的日记。<br>写一篇用隔空投送发过去吧 ✉️", anon:"无名",
+  toast_x_saved:"交换日记已保存 ✉️", toast_x_received:"收到 {n} 篇日记 💌", toast_x_none:"没有新的日记",
+  confirm_del_x:"删除这篇日记吗？", alert_x_empty:"还没有可发送的日记，先写一篇吧！",
+  err_x_file:"不是交换日记文件", toast_x_open:"🎁 秘密交换日记已开启！", toast_x_hidden:"🤫 已隐藏交换日记", x_fname:"交换日记",
+  ph_search:"上周看的 / 5星电影 / 昨天的日记", btn_search:"搜索",
+  s_understood:"这样理解 → ", s_no_parse:"没找到时间/类型表达，已在全部内容中搜索。",
+  s_results:"结果 — 共 {n} 条", s_none:"没有结果。", s_period:"期间 {a} ~ {b}", s_rating:"{n}星以上", s_only:"仅{k}", s_kw:"关键词: ",
+  h_settings:"设置", lbl_theme:"主题色", lbl_lang:"语言", lbl_footer:"底部文字",
+  footer_hint:"显示在标签栏下方。支持表情符号。留空则不显示。", footer_default:"🐢 今天也一点一点记录",
+  h_data:"数据管理", data_stats:"已保存 {n} 条记录 · {m} 篇日记。",
+  btn_export:"导出（JSON备份）", btn_import:"导入（JSON）",
+  data_note:"所有数据只保存在这部手机上。换手机或删除应用后会丢失，请不时导出备份。",
+  backup_fname:"日常记录备份",
+  confirm_import:"确定 = 合并到现有数据\n取消 = 清空并替换",
+  toast_merged:"已合并 {n} 条记录 🐢", alert_replaced:"已替换为 {n} 条记录、{m} 篇日记。",
+  err_import:"导入失败: ", err_format:"格式不对",
+  theme_sage:"鼠尾草绿", theme_lavender:"薰衣草紫", theme_peach:"蜜桃", theme_sky:"天蓝", theme_mono:"灰调",
+},
+};
+const LANG_KEY = "dailylog_lang";
+const LANG_NAMES = {ko:"한국어", en:"English", ja:"日本語", zh:"中文"};
+let LANG = localStorage.getItem(LANG_KEY) || "ko";
+if(!L10N[LANG]) LANG = "ko";
+function T(key){
+  const v = L10N[LANG][key];
+  return v !== undefined ? v : (L10N.ko[key] !== undefined ? L10N.ko[key] : key);
+}
+function TF(key, vars){
+  let s = T(key);
+  for(const [k, v] of Object.entries(vars || {})) s = s.replace("{" + k + "}", v);
+  return s;
+}
+function kindLabel(k){
+  const v = L10N[LANG]["kind_" + k] || L10N.ko["kind_" + k];
+  return v || k;
+}
+function applyLang(){
+  document.documentElement.lang = LANG === "zh" ? "zh-CN" : LANG;
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.innerHTML = T(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = T(el.dataset.i18nPh); });
+  document.getElementById("foot-input").placeholder = T("footer_default");
+  applyFooter();
+  renderKindChips(); applyKindForm(); setEditMode(!!editingId);
+  renderFilterChips(); renderRecordList();
+  renderDiaryList(); renderExchangeList();
+  renderThemeRow(); renderLangRow(); updateStats();
+  const onBtn = document.querySelector("nav button.on");
+  if(onBtn) document.getElementById("page-title").textContent = T("title_" + onBtn.dataset.tab);
+}
+function renderLangRow(){
+  const row = document.getElementById("lang-row");
+  row.innerHTML = "";
+  for(const [code, name] of Object.entries(LANG_NAMES)){
+    const b = document.createElement("button");
+    b.className = "chip" + (code === LANG ? " on" : "");
+    b.textContent = name;
+    b.addEventListener("click", () => {
+      LANG = code;
+      localStorage.setItem(LANG_KEY, code);
+      applyLang();
+    });
+    row.appendChild(b);
+  }
+}
 
 /* ===================== NL-PARSER-START ===================== */
 function _fmt(d){
@@ -386,18 +623,26 @@ function parseQuery(q, today){
   let start = null, end = null, kind = null, rating = null;
   const explain = [];
 
+  // 한국어·영어·일본어·중국어 표현을 모두 인식 (UI 언어와 무관하게 전부 활성)
+  const _yesterday = () => [_addDays(today,-1), _addDays(today,-1)];
+  const _dby = () => [_addDays(today,-2), _addDays(today,-2)];
+  const _thisWeek = () => [_weekRange(today,0)[0], today];
+  const _lastMonth = back => { const [y,m]=_prevMonth(today.getFullYear(),today.getMonth()+1,back); return _monthRange(y,m); };
+  const _thisMonth = () => [new Date(today.getFullYear(), today.getMonth(), 1), today];
+  const _thisYear = () => [new Date(today.getFullYear(),0,1), today];
+  const _lastYear = () => [new Date(today.getFullYear()-1,0,1), new Date(today.getFullYear()-1,11,31)];
   const datePatterns = [
-    [/그저께|그제/, () => [_addDays(today,-2), _addDays(today,-2)]],
-    [/어제/, () => [_addDays(today,-1), _addDays(today,-1)]],
+    [/그저께|그제/, _dby],
+    [/어제/, _yesterday],
     [/오늘/, () => [today, today]],
     [/지지난\s*주/, () => _weekRange(today, 2)],
     [/(지난|저번)\s*주/, () => _weekRange(today, 1)],
-    [/이번\s*주/, () => [_weekRange(today,0)[0], today]],
-    [/지지난\s*달/, () => { const [y,m]=_prevMonth(today.getFullYear(),today.getMonth()+1,2); return _monthRange(y,m); }],
-    [/(지난|저번)\s*달/, () => { const [y,m]=_prevMonth(today.getFullYear(),today.getMonth()+1,1); return _monthRange(y,m); }],
-    [/이번\s*달/, () => [new Date(today.getFullYear(), today.getMonth(), 1), today]],
-    [/올해/, () => [new Date(today.getFullYear(),0,1), today]],
-    [/작년/, () => [new Date(today.getFullYear()-1,0,1), new Date(today.getFullYear()-1,11,31)]],
+    [/이번\s*주/, _thisWeek],
+    [/지지난\s*달/, () => _lastMonth(2)],
+    [/(지난|저번)\s*달/, () => _lastMonth(1)],
+    [/이번\s*달/, _thisMonth],
+    [/올해/, _thisYear],
+    [/작년/, _lastYear],
     [/최근\s*(\d+)\s*일/, m => [_addDays(today,-+m[1]), today]],
     [/최근\s*(\d+)\s*주/, m => [_addDays(today,-7*+m[1]), today]],
     [/최근\s*(\d+)\s*(?:달|개월)/, m => [_addDays(today,-30*+m[1]), today]],
@@ -405,8 +650,54 @@ function parseQuery(q, today){
     [/(\d+)\s*주\s*전/, m => _weekRange(today, +m[1])],
     [/(\d{4})\s*년\s*(\d{1,2})\s*월/, m => _monthRange(+m[1], +m[2])],
     [/(\d{4})\s*년/, m => [new Date(+m[1],0,1), new Date(+m[1],11,31)]],
-    [/(\d{1,2})\s*월(?!\s*\d)/, m => {
+    // English
+    [/day\s*before\s*yesterday/i, _dby],
+    [/yesterday/i, _yesterday],
+    [/today/i, () => [today, today]],
+    [/last\s*week/i, () => _weekRange(today, 1)],
+    [/this\s*week/i, _thisWeek],
+    [/last\s*month/i, () => _lastMonth(1)],
+    [/this\s*month/i, _thisMonth],
+    [/this\s*year/i, _thisYear],
+    [/last\s*year/i, _lastYear],
+    [/(?:past|last|recent)\s*(\d+)\s*days?/i, m => [_addDays(today,-+m[1]), today]],
+    [/(?:past|last|recent)\s*(\d+)\s*weeks?/i, m => [_addDays(today,-7*+m[1]), today]],
+    [/(?:past|last|recent)\s*(\d+)\s*months?/i, m => [_addDays(today,-30*+m[1]), today]],
+    [/(\d+)\s*days?\s*ago/i, m => [_addDays(today,-+m[1]), _addDays(today,-+m[1])]],
+    [/(\d+)\s*weeks?\s*ago/i, m => _weekRange(today, +m[1])],
+    // 日本語
+    [/一昨日|おととい/, _dby],
+    [/昨日|きのう/, _yesterday],
+    [/今日|きょう/, () => [today, today]],
+    [/先々週/, () => _weekRange(today, 2)],
+    [/先週/, () => _weekRange(today, 1)],
+    [/今週/, _thisWeek],
+    [/先々月/, () => _lastMonth(2)],
+    [/先月/, () => _lastMonth(1)],
+    [/今月/, _thisMonth],
+    [/最近(\d+)日/, m => [_addDays(today,-+m[1]), today]],
+    [/(\d+)日前/, m => [_addDays(today,-+m[1]), _addDays(today,-+m[1])]],
+    // 中文
+    [/前天/, _dby],
+    [/昨天/, _yesterday],
+    [/今天/, () => [today, today]],
+    [/上上[周週]/, () => _weekRange(today, 2)],
+    [/上[周週]|上个星期|上個星期/, () => _weekRange(today, 1)],
+    [/[这這本][周週]/, _thisWeek],
+    [/上上个月|上上個月/, () => _lastMonth(2)],
+    [/上个月|上個月/, () => _lastMonth(1)],
+    [/[这這]个月|[这這]個月|本月/, _thisMonth],
+    [/最近(\d+)天/, m => [_addDays(today,-+m[1]), today]],
+    [/(\d+)天前/, m => [_addDays(today,-+m[1]), _addDays(today,-+m[1])]],
+    // 日中 공통 한자
+    [/今年/, _thisYear],
+    [/去年|昨年/, _lastYear],
+    [/(\d{4})年(\d{1,2})月/, m => _monthRange(+m[1], +m[2])],
+    [/(\d{4})年/, m => [new Date(+m[1],0,1), new Date(+m[1],11,31)]],
+    // "N월"은 마지막에 (다른 패턴과 충돌 방지)
+    [/(\d{1,2})\s*[월月](?!\s*\d)/, m => {
       const mo = +m[1];
+      if(mo < 1 || mo > 12) return null;
       const y = mo <= today.getMonth()+1 ? today.getFullYear() : today.getFullYear()-1;
       return _monthRange(y, mo);
     }],
@@ -414,14 +705,20 @@ function parseQuery(q, today){
   for(const [re, fn] of datePatterns){
     const m = text.match(re);
     if(m){
-      [start, end] = fn(m);
+      const range = fn(m);
+      if(!range) continue;
+      [start, end] = range;
       text = text.slice(0, m.index) + " " + text.slice(m.index + m[0].length);
-      explain.push(`기간 ${_fmt(start)} ~ ${_fmt(end)}`);
+      explain.push(TF("s_period", {a:_fmt(start), b:_fmt(end)}));
       break;
     }
   }
 
-  const ratingPatterns = [/별점?\s*(\d)\s*개?(?:짜리)?/, /(\d)\s*점(?:짜리)?(?:\s*이상)?/];
+  const ratingPatterns = [
+    /별점?\s*(\d)\s*개?(?:짜리)?/, /(\d)\s*점(?:짜리)?(?:\s*이상)?/,
+    /(\d)\s*[-\s]?stars?(?:\s*(?:or\s*more|and\s*up))?/i,
+    /星(\d)(?:以上)?/, /(\d)\s*つ星/, /(\d)星(?:以上)?/,
+  ];
   for(const re of ratingPatterns){
     const m = text.match(re);
     if(m){
@@ -429,27 +726,26 @@ function parseQuery(q, today){
       if(r >= 1 && r <= 5){
         rating = r;
         text = text.slice(0, m.index) + " " + text.slice(m.index + m[0].length);
-        explain.push(`별점 ${r} 이상`);
+        explain.push(TF("s_rating", {n:r}));
         break;
       }
     }
   }
 
   const kindPatterns = [
-    [/유튜브|유투브|youtube|영상/i, "youtube"],
-    [/드라마/, "drama"],
-    [/영화/, "movie"],
-    [/논문/, "paper"],
-    [/책|독서/, "book"],
-    [/일기/, "diary"],
+    [/유튜브|유투브|youtube|영상|videos?|動画|视频|視頻/i, "youtube"],
+    [/드라마|dramas?|ドラマ|电视剧|電視劇/i, "drama"],
+    [/영화|movies?|films?|映画|电影|電影/i, "movie"],
+    [/논문|papers?|thesis|論文|论文/i, "paper"],
+    [/책|독서|books?|読書|(?<!日)本|书|書籍/i, "book"],
+    [/일기|diary|diaries|journal|日記|日记/i, "diary"],
   ];
-  const kindLabels = {youtube:"유튜브", drama:"드라마", movie:"영화", book:"책", paper:"논문", diary:"일기"};
   for(const [re, k] of kindPatterns){
     const m = text.match(re);
     if(m){
       kind = k;
       text = text.slice(0, m.index) + " " + text.slice(m.index + m[0].length);
-      explain.push(`${kindLabels[k]}만`);
+      explain.push(TF("s_only", {k:kindLabel(k)}));
       break;
     }
   }
@@ -460,10 +756,16 @@ function parseQuery(q, today){
     "알려줘","찾아줘","보여줘","검색","기록","목록","있었지","있지",
     "했던","했지","어땠지","어땠더라","다시","그","중에","중",
     "읽은","읽었던","읽었지","읽다가","들었던","쓴","썼던","적은",
-    "재밌게","재미있게","감명깊었던","감명","좋았던","인상깊었던"]);
+    "재밌게","재미있게","감명깊었던","감명","좋았던","인상깊었던",
+    // English
+    "the","a","an","i","my","me","of","in","on","at","that","this","was","were","is","are","did","do",
+    "what","which","when","watched","watch","saw","seen","read","show","find","search","list",
+    // 日本語 / 中文
+    "見た","みた","観た","読んだ","聞いた","何","いつ","もの","こと",
+    "看的","看过","看了","读过","什么","哪个"]);
   const PARTICLES = ["이랑","에서","부터","까지","으로","은","는","이","가","을","를","에","도","만","의","랑","와","과","로"];
 
-  text = text.replace(/[?!.,~·…"'`]+/g, " ");
+  text = text.replace(/[?!.,~·…"'`？！。、]+/g, " ");
   const keywords = [];
   for(let tok of text.split(/\s+/)){
     if(!tok) continue;
@@ -471,10 +773,10 @@ function parseQuery(q, today){
     for(const p of PARTICLES.slice().sort((a,b)=>b.length-a.length)){
       if(tok.endsWith(p) && tok.length > p.length + 1){ tok = tok.slice(0, -p.length); break; }
     }
-    if(!tok || STOPWORDS.has(tok)) continue;
+    if(!tok || STOPWORDS.has(tok) || STOPWORDS.has(tok.toLowerCase())) continue;
     keywords.push(tok);
   }
-  if(keywords.length) explain.push("키워드: " + keywords.join(", "));
+  if(keywords.length) explain.push(T("s_kw") + keywords.join(", "));
 
   return {start: start ? _fmt(start) : null, end: end ? _fmt(end) : null, kind, rating, keywords, explain};
 }
@@ -572,11 +874,11 @@ function _imgLoads(src){
 
 /* ===================== 테마 ===================== */
 const THEMES = [
-  ["sage", "세이지", "#7FA98E"],
-  ["lavender", "라벤더", "#9189BB"],
-  ["peach", "피치", "#C09469"],
-  ["sky", "하늘", "#7E9EB5"],
-  ["mono", "모노", "#878D89"],
+  ["sage", "#7FA98E"],
+  ["lavender", "#9189BB"],
+  ["peach", "#C09469"],
+  ["sky", "#7E9EB5"],
+  ["mono", "#878D89"],
 ];
 const THEME_KEY = "dailylog_theme";
 
@@ -596,10 +898,11 @@ function renderThemeRow(){
   const cur = localStorage.getItem(THEME_KEY) || "sage";
   const row = document.getElementById("theme-row");
   row.innerHTML = "";
-  for(const [name, label, color] of THEMES){
+  for(const [name, color] of THEMES){
     const b = document.createElement("button");
     b.className = "theme-dot" + (name === cur ? " on" : "");
     b.style.background = color;
+    const label = T("theme_" + name);
     b.title = label; b.setAttribute("aria-label", label);
     b.addEventListener("click", () => applyTheme(name));
     row.appendChild(b);
@@ -612,15 +915,15 @@ function renderThemeRow(){
 
 /* ===================== 하단 문구 (사용자 지정) ===================== */
 const FOOTER_KEY = "dailylog_footer";
-const FOOTER_DEFAULT = "🐢 오늘도 차곡차곡";
 function applyFooter(){
   const saved = localStorage.getItem(FOOTER_KEY);
-  document.getElementById("app-footer").textContent = saved === null ? FOOTER_DEFAULT : saved;
+  // 직접 정한 문구가 없으면 현재 언어의 기본 문구
+  document.getElementById("app-footer").textContent = saved === null ? T("footer_default") : saved;
 }
 {
   const inp = document.getElementById("foot-input");
   const saved = localStorage.getItem(FOOTER_KEY);
-  inp.value = saved === null ? FOOTER_DEFAULT : saved;
+  inp.value = saved === null ? "" : saved;
   inp.addEventListener("input", () => {
     localStorage.setItem(FOOTER_KEY, inp.value.trim());
     applyFooter();
@@ -812,7 +1115,7 @@ function photoPicker(listId, btnId, inputId){
       try{
         const blob = await fileToResizedBlob(f);
         state.push({blob, url: URL.createObjectURL(blob)});
-      }catch(err){ toast("사진 처리에 실패했어요"); }
+      }catch(err){ toast(T("toast_photo_fail")); }
     }
     e.target.value = "";
     render();
@@ -845,14 +1148,13 @@ function photoPicker(listId, btnId, inputId){
 }
 
 /* ===================== UI: 탭 ===================== */
-const TITLES = {records:"기록", diary:"일기", search:"검색", exchange:"교환일기"};
 document.querySelectorAll("nav button").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b === btn));
     const tab = btn.dataset.tab;
     document.querySelectorAll("main section").forEach(s => s.classList.remove("on"));
     document.getElementById("sec-" + tab).classList.add("on");
-    document.getElementById("page-title").textContent = TITLES[tab];
+    document.getElementById("page-title").textContent = T("title_" + tab);
     document.querySelector("main").scrollTo(0, 0);
   });
 });
@@ -881,21 +1183,22 @@ let curRating = 0;
 function renderKindChips(){
   const wrap = document.getElementById("kind-chips");
   wrap.innerHTML = "";
-  for(const [k, label] of Object.entries(KINDS)){
+  for(const k of KIND_KEYS){
     const b = document.createElement("button");
     b.className = "chip" + (k === curKind ? " on" : "");
-    b.textContent = label;
+    b.textContent = kindLabel(k);
     b.addEventListener("click", () => { curKind = k; renderKindChips(); applyKindForm(); });
     wrap.appendChild(b);
   }
 }
 function applyKindForm(){
-  document.getElementById("f-url-label").textContent = curKind === "youtube" ? "YouTube URL" : "링크 / URL (선택)";
+  document.getElementById("f-url-label").textContent = curKind === "youtube" ? "YouTube URL" : T("lbl_url_generic");
   document.getElementById("f-url").placeholder = curKind === "youtube" ? "https://youtu.be/..." : "https://...";
+  document.getElementById("f-url-hint").textContent = T("url_hint");
   document.getElementById("f-ep-wrap").style.display = curKind === "drama" ? "" : "none";
-  document.getElementById("f-creator-label").textContent = CREATOR_LABELS[curKind];
+  document.getElementById("f-creator-label").textContent = T("creator_" + curKind);
   document.getElementById("f-creator-wrap").style.display = curKind === "drama" ? "none" : "";
-  document.getElementById("f-title").placeholder = curKind === "drama" ? "드라마 제목 (예: 폭싹 속았수다)" : "제목";
+  document.getElementById("f-title").placeholder = curKind === "drama" ? T("ph_title_drama") : T("ph_title");
 }
 function renderStars(){
   const wrap = document.getElementById("f-stars");
@@ -912,7 +1215,7 @@ function renderStars(){
 /* ---- 기록 수정 모드 ---- */
 let editingId = null;
 function setEditMode(on){
-  document.getElementById("f-save").textContent = on ? "수정 저장" : "저장";
+  document.getElementById("f-save").textContent = on ? T("btn_save_edit") : T("btn_save");
   document.getElementById("f-cancel-edit").style.display = on ? "" : "none";
 }
 function clearRecordForm(){
@@ -921,13 +1224,13 @@ function clearRecordForm(){
   curRating = 0; renderStars();
   recPhotos.reset([]);
   urlMeta = {url: null, thumb: null};
-  document.getElementById("f-url-hint").textContent = "붙여넣으면 대표 이미지(썸네일)와 제목을 자동으로 채워줘요.";
+  document.getElementById("f-url-hint").textContent = T("url_hint");
 }
 function startEditRecord(id){
   const r = DB.records.find(x => x.id === id);
   if(!r) return;
   editingId = id;
-  curKind = KINDS[r.kind] ? r.kind : "etc";
+  curKind = KIND_KEYS.includes(r.kind) ? r.kind : "etc";
   renderKindChips(); applyKindForm();
   document.getElementById("f-title").value = r.title || "";
   document.getElementById("f-creator").value = r.creator || "";
@@ -942,7 +1245,7 @@ function startEditRecord(id){
   recPhotos.reset(r.photos || []);
   setEditMode(true);
   document.querySelector("main").scrollTo({top: 0, behavior: "smooth"});
-  toast("수정 중 — 고치고 '수정 저장'을 누르세요");
+  toast(T("toast_editing"));
 }
 document.getElementById("f-cancel-edit").addEventListener("click", () => {
   editingId = null; setEditMode(false); clearRecordForm();
@@ -958,18 +1261,18 @@ document.getElementById("f-url").addEventListener("input", e => {
   urlFetchTimer = setTimeout(async () => {
     const hint = document.getElementById("f-url-hint");
     if(isYt){
-      hint.textContent = "영상 정보 가져오는 중...";
+      hint.textContent = T("url_fetching_video");
       const meta = await tryFetchYtTitle(url);
       if(meta){
         if(!document.getElementById("f-title").value) document.getElementById("f-title").value = meta.title;
         if(!document.getElementById("f-creator").value) document.getElementById("f-creator").value = meta.channel;
-        hint.textContent = "제목·채널을 자동으로 채웠어요.";
+        hint.textContent = T("url_filled_video");
       }else{
-        hint.textContent = "제목 자동 가져오기 실패 — 직접 입력해 주세요. (썸네일은 자동으로 저장돼요)";
+        hint.textContent = T("url_fail_video");
       }
       return;
     }
-    hint.textContent = "대표 이미지 가져오는 중...";
+    hint.textContent = T("url_fetching_meta");
     const meta = await tryFetchPageMeta(url);
     let thumb = meta && meta.thumb ? meta.thumb : null;
     if(thumb && !(await _imgLoads(thumb))) thumb = null;
@@ -977,12 +1280,10 @@ document.getElementById("f-url").addEventListener("input", e => {
       urlMeta = {url, thumb};
       if(meta.title && !document.getElementById("f-title").value)
         document.getElementById("f-title").value = meta.title;
-      hint.textContent = thumb
-        ? "대표 이미지를 찾았어요 — 저장하면 썸네일로 보여요."
-        : "대표 이미지가 없어 썸네일 없이 저장돼요.";
+      hint.textContent = thumb ? T("url_found_thumb") : T("url_no_thumb");
     }else{
       urlMeta = {url: null, thumb: null};
-      hint.textContent = "페이지 정보를 못 가져왔어요 — 썸네일 없이 링크만 저장돼요.";
+      hint.textContent = T("url_fail_meta");
     }
   }, 600);
 });
@@ -990,15 +1291,15 @@ document.getElementById("f-url").addEventListener("input", e => {
 document.getElementById("f-save").addEventListener("click", async () => {
   const title = document.getElementById("f-title").value.trim();
   const url = document.getElementById("f-url").value.trim();
-  if(curKind === "youtube" && !title && !url){ alert("URL이나 제목을 입력해 주세요."); return; }
-  if(curKind !== "youtube" && !title){ alert("제목을 입력해 주세요."); return; }
+  if(curKind === "youtube" && !title && !url){ alert(T("alert_need_url_title")); return; }
+  if(curKind !== "youtube" && !title){ alert(T("alert_need_title")); return; }
 
   const photoIds = await recPhotos.commit();
   const fields = {
     kind: curKind,
-    title: title || "(제목 없음)",
+    title: title || T("no_title"),
     creator: document.getElementById("f-creator").value.trim() || null,
-    detail: curKind === "drama" ? (document.getElementById("f-ep").value + "화") : null,
+    detail: curKind === "drama" ? TF("ep_fmt", {n: document.getElementById("f-ep").value}) : null,
     url: url || null,
     thumbnail: curKind === "youtube" ? ytThumb(url)
       : (url && urlMeta.url === url ? urlMeta.thumb : null),
@@ -1014,13 +1315,13 @@ document.getElementById("f-save").addEventListener("click", async () => {
       DB.records[i] = Object.assign({}, DB.records[i], fields);
     }
     editingId = null; setEditMode(false);
-    toast("수정했어요! 🐢");
+    toast(T("toast_edited"));
   }else{
     DB.records.push(Object.assign({
       id: Date.now() + "-" + Math.random().toString(36).slice(2, 7),
       createdAt: Date.now(),
     }, fields));
-    toast("저장했어요! 🐢");
+    toast(T("toast_saved"));
   }
   save();
   clearRecordForm();
@@ -1032,11 +1333,10 @@ let curFilter = "all";
 function renderFilterChips(){
   const wrap = document.getElementById("filter-chips");
   wrap.innerHTML = "";
-  const opts = Object.assign({all:"전체"}, KINDS);
-  for(const [k, label] of Object.entries(opts)){
+  for(const k of ["all", ...KIND_KEYS]){
     const b = document.createElement("button");
     b.className = "chip" + (k === curFilter ? " on" : "");
-    b.textContent = label;
+    b.textContent = k === "all" ? T("all") : kindLabel(k);
     b.addEventListener("click", () => { curFilter = k; renderFilterChips(); renderRecordList(); });
     wrap.appendChild(b);
   }
@@ -1044,15 +1344,15 @@ function renderFilterChips(){
 function recordCardHTML(r, deletable){
   const star = r.rating ? ` <span class="rec-star">${STAR(r.rating)}</span>` : "";
   const detail = r.detail ? " " + esc(r.detail) : "";
-  const sub = [r.creator, "기록: " + r.date].filter(Boolean).map(esc).join(" · ");
+  const sub = [r.creator, T("rec_prefix") + r.date].filter(Boolean).map(esc).join(" · ");
   const thumb = r.thumbnail ? `<div class="rec-thumb"><img src="${esc(r.thumbnail)}" loading="lazy" alt="" onerror="this.closest('.rec-thumb').style.display='none'"></div>` : "";
-  const link = r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">열기</a>` : "";
-  const edit = deletable ? `<button data-edit="${esc(r.id)}">수정</button>` : "";
-  const del = deletable ? `<button class="del" data-del="${esc(r.id)}">삭제</button>` : "";
+  const link = r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${T("act_open")}</a>` : "";
+  const edit = deletable ? `<button data-edit="${esc(r.id)}">${T("act_edit")}</button>` : "";
+  const del = deletable ? `<button class="del" data-del="${esc(r.id)}">${T("act_del")}</button>` : "";
   return `<div class="card rec-card">
     ${thumb}
     <div class="rec-body">
-      <div class="rec-kind">${KINDS[r.kind] || esc(r.kind)}</div>
+      <div class="rec-kind">${esc(kindLabel(r.kind))}</div>
       <div class="rec-title">${esc(r.title)}${detail}${star}</div>
       <div class="rec-sub">${sub}</div>
       ${r.memo ? `<div class="rec-memo">${esc(r.memo)}</div>` : ""}
@@ -1068,14 +1368,14 @@ function renderRecordList(){
   const el = document.getElementById("record-list");
   el.innerHTML = rows.length
     ? rows.map(r => recordCardHTML(r, true)).join("")
-    : `<div class="empty">🐢<br>아직 기록이 없어요.<br>위에서 추가해 보세요.</div>`;
+    : `<div class="empty">${T("empty_records")}</div>`;
   hydratePhotos(el);
 }
 document.getElementById("record-list").addEventListener("click", e => {
   const eid = e.target.dataset && e.target.dataset.edit;
   if(eid){ startEditRecord(eid); return; }
   const id = e.target.dataset && e.target.dataset.del;
-  if(id && confirm("이 기록을 삭제할까요?")){
+  if(id && confirm(T("confirm_del_record"))){
     const rec = DB.records.find(r => r.id === id);
     if(rec && rec.photos) imgDel(rec.photos);
     DB.records = DB.records.filter(r => r.id !== id);
@@ -1095,8 +1395,8 @@ document.getElementById("d-date").addEventListener("change", loadDiaryForm);
 document.getElementById("d-save").addEventListener("click", async () => {
   const ds = document.getElementById("d-date").value;
   const content = document.getElementById("d-content").value.trim();
-  if(!ds){ alert("날짜를 선택해 주세요."); return; }
-  if(!content){ alert("내용을 입력해 주세요."); return; }
+  if(!ds){ alert(T("alert_need_date")); return; }
+  if(!content){ alert(T("alert_need_content")); return; }
   const prev = DB.diary[ds];
   const photoIds = await diaryPhotos.commit();
   if(prev && prev.photos){
@@ -1104,11 +1404,11 @@ document.getElementById("d-save").addEventListener("click", async () => {
   }
   DB.diary[ds] = {content, updatedAt: Date.now(), photos: photoIds};
   save(); loadDiaryForm(); renderDiaryList();
-  toast("일기를 저장했어요 🐢");
+  toast(T("toast_diary_saved"));
 });
 document.getElementById("d-del").addEventListener("click", () => {
   const ds = document.getElementById("d-date").value;
-  if(DB.diary[ds] && confirm("이 날짜의 일기를 삭제할까요?")){
+  if(DB.diary[ds] && confirm(T("confirm_del_diary"))){
     if(DB.diary[ds].photos) imgDel(DB.diary[ds].photos);
     delete DB.diary[ds];
     save(); loadDiaryForm(); renderDiaryList();
@@ -1123,7 +1423,7 @@ function renderDiaryList(){
         <div class="diary-body">${esc(d.content)}${(d.photos && d.photos.length)
           ? `<div class="rec-photos">${d.photos.map(id => `<img data-pid="${esc(id)}" alt="">`).join("")}</div>` : ""}</div>
       </details>`).join("")
-    : `<div class="empty">🐢<br>아직 일기가 없어요.</div>`;
+    : `<div class="empty">${T("empty_diary")}</div>`;
   hydratePhotos(el);
 }
 
@@ -1135,8 +1435,8 @@ function runSearch(){
   if(!q){ exp.textContent = ""; out.innerHTML = ""; return; }
   const p = parseQuery(q);
   exp.textContent = p.explain.length
-    ? "이렇게 이해했어요 → " + p.explain.join(" · ")
-    : "기간·종류 표현을 못 찾아서 전체에서 검색했어요.";
+    ? T("s_understood") + p.explain.join(" · ")
+    : T("s_no_parse");
 
   let recRows = [], diaryRows = [];
   if(p.kind === "diary"){
@@ -1146,13 +1446,13 @@ function runSearch(){
     if(!p.kind && !p.rating) diaryRows = searchDiaries(p);
   }
   const total = recRows.length + diaryRows.length;
-  let html = `<h3>결과 — 총 ${total}건</h3>`;
+  let html = `<h3>${TF("s_results", {n: total})}</h3>`;
   if(total === 0){
-    html += `<div class="empty">결과가 없어요.</div>`;
+    html += `<div class="empty">${T("s_none")}</div>`;
   }else{
     html += recRows.map(r => recordCardHTML(r, false)).join("");
     html += diaryRows.map(([ds, d]) => `<div class="card">
-      <div class="rec-kind">일기</div>
+      <div class="rec-kind">${T("kind_diary")}</div>
       <div class="rec-title">${ds} (${weekdayOf(ds)})</div>
       <div class="rec-memo">${esc(d.content)}</div>
     </div>`).join("");
@@ -1171,9 +1471,12 @@ document.getElementById("s-q").addEventListener("input", () => {
 /* ===================== 데이터 관리 ===================== */
 const sheet = document.getElementById("data-sheet");
 const sheetBg = document.getElementById("sheet-bg");
-function openSheet(){
+function updateStats(){
   const n = DB.records.length, m = Object.keys(DB.diary).length;
-  document.getElementById("data-stats").textContent = `기록 ${n}건 · 일기 ${m}편 저장돼 있어요.`;
+  document.getElementById("data-stats").textContent = TF("data_stats", {n, m});
+}
+function openSheet(){
+  updateStats();
   sheetBg.classList.add("show"); sheet.classList.add("show");
 }
 function closeSheet(){ sheetBg.classList.remove("show"); sheet.classList.remove("show"); }
@@ -1193,7 +1496,7 @@ document.getElementById("exp-btn").addEventListener("click", async () => {
   }
   const payload = JSON.stringify({version:2, exportedAt:new Date().toISOString(), records:DB.records, diary:DB.diary, exchange:DB.exchange, photos}, null, 2);
   const blob = new Blob([payload], {type:"application/json"});
-  const fname = `일상기록-백업-${todayStr()}.json`;
+  const fname = `${T("backup_fname")}-${todayStr()}.json`;
   const file = new File([blob], fname, {type:"application/json"});
   if(navigator.canShare && navigator.canShare({files:[file]})){
     navigator.share({files:[file], title:fname}).catch(()=>{});
@@ -1215,12 +1518,12 @@ document.getElementById("imp-file").addEventListener("change", async e => {
       await importPhotoMap(data.photos);
       const added = mergeExchange(data.entries);
       save(); renderExchangeList(); closeSheet();
-      toast(added ? `교환일기 ${added}편이 도착했어요 💌` : "새로운 교환일기가 없었어요");
+      toast(added ? TF("toast_x_received", {n: added}) : T("toast_x_none"));
       e.target.value = "";
       return;
     }
-    if(!Array.isArray(data.records) || typeof data.diary !== "object") throw new Error("형식이 달라요");
-    const merge = confirm("확인 = 기존 데이터에 합치기\n취소 = 기존 데이터를 지우고 덮어쓰기");
+    if(!Array.isArray(data.records) || typeof data.diary !== "object") throw new Error(T("err_format"));
+    const merge = confirm(T("confirm_import"));
     if(!merge) await imgClear();
     if(data.photos){
       for(const [pid, durl] of Object.entries(data.photos)){
@@ -1242,16 +1545,16 @@ document.getElementById("imp-file").addEventListener("change", async e => {
         if(!DB.diary[ds] || (d.updatedAt||0) > (DB.diary[ds].updatedAt||0)) DB.diary[ds] = d;
       }
       mergeExchange(data.exchange);
-      toast(`기록 ${added}건을 합쳤어요 🐢`);
+      toast(TF("toast_merged", {n: added}));
     }else{
       DB = {records:data.records, diary:data.diary,
         exchange: Array.isArray(data.exchange) ? data.exchange : []};
-      alert(`기록 ${data.records.length}건, 일기 ${Object.keys(data.diary).length}편으로 교체했어요.`);
+      alert(TF("alert_replaced", {n: data.records.length, m: Object.keys(data.diary).length}));
     }
     save(); renderRecordList(); renderDiaryList(); loadDiaryForm(); renderExchangeList();
     closeSheet();
   }catch(err){
-    alert("가져오기 실패: " + err.message);
+    alert(T("err_import") + err.message);
   }
   e.target.value = "";
 });
@@ -1276,13 +1579,13 @@ function showExchangeTab(){
       localStorage.setItem(X_UNLOCK_KEY, open ? "1" : "0");
       showExchangeTab();
       if(open){
-        toast("🎁 비밀 교환일기장이 열렸어요!");
+        toast(T("toast_x_open"));
       }else{
         // 교환 탭을 보고 있었다면 기록 탭으로 돌아간다 (일기는 그대로 보관됨)
         if(document.getElementById("sec-exchange").classList.contains("on")){
           document.querySelector('nav button[data-tab="records"]').click();
         }
-        toast("🤫 교환일기장을 숨겼어요");
+        toast(T("toast_x_hidden"));
       }
     }
   });
@@ -1294,13 +1597,13 @@ function renderExchangeList(){
   const list = DB.exchange.slice().sort((a, b) =>
     (b.date || "").localeCompare(a.date || "") || (b.createdAt || 0) - (a.createdAt || 0));
   if(!list.length){
-    wrap.innerHTML = '<div class="empty">아직 주고받은 일기가 없어요.<br>한 편 쓰고 에어드랍으로 보내보세요 ✉️</div>';
+    wrap.innerHTML = `<div class="empty">${T("empty_x")}</div>`;
     return;
   }
   for(const en of list){
     const d = document.createElement("details"); d.className = "diary-item";
     const s = document.createElement("summary");
-    s.textContent = `${en.date || "?"} · ${en.author || "이름 없음"}`;
+    s.textContent = `${en.date || "?"} · ${en.author || T("anon")}`;
     const b = document.createElement("div"); b.className = "diary-body";
     const txt = document.createElement("div"); txt.textContent = en.content || "";
     b.appendChild(txt);
@@ -1313,7 +1616,7 @@ function renderExchangeList(){
     del.textContent = "삭제";
     del.style.cssText = "margin-top:10px;background:none;border:none;color:var(--danger);font-size:13px;font-weight:600;padding:0";
     del.addEventListener("click", () => {
-      if(!confirm("이 일기를 삭제할까요?")) return;
+      if(!confirm(T("confirm_del_x"))) return;
       imgDel(en.photos || []);
       DB.exchange = DB.exchange.filter(x => x.id !== en.id);
       save(); renderExchangeList();
@@ -1342,12 +1645,12 @@ function mergeExchange(entries){
 document.getElementById("x-save").addEventListener("click", async () => {
   const author = document.getElementById("x-author").value.trim();
   const content = document.getElementById("x-content").value.trim();
-  if(!content){ alert("내용을 입력해 주세요."); return; }
+  if(!content){ alert(T("alert_need_content")); return; }
   if(author) localStorage.setItem(X_NAME_KEY, author);
   const photoIds = await xPhotos.commit();
   DB.exchange.push({
     id: newXId(),
-    author: author || "이름 없음",
+    author: author || T("anon"),
     date: document.getElementById("x-date").value || todayStr(),
     content,
     photos: photoIds,
@@ -1357,10 +1660,10 @@ document.getElementById("x-save").addEventListener("click", async () => {
   document.getElementById("x-content").value = "";
   xPhotos.reset([]);
   renderExchangeList();
-  toast("교환일기를 저장했어요 ✉️");
+  toast(T("toast_x_saved"));
 });
 document.getElementById("x-share").addEventListener("click", async () => {
-  if(!DB.exchange.length){ alert("보낼 일기가 없어요. 먼저 한 편 써보세요!"); return; }
+  if(!DB.exchange.length){ alert(T("alert_x_empty")); return; }
   // 사진도 dataURL로 담아서 함께 보낸다
   const photos = {};
   for(const en of DB.exchange){
@@ -1371,7 +1674,7 @@ document.getElementById("x-share").addEventListener("click", async () => {
   }
   const payload = JSON.stringify({type:"dailylog-exchange", version:1,
     exportedAt:new Date().toISOString(), entries:DB.exchange, photos}, null, 2);
-  const fname = `교환일기-${todayStr()}.json`;
+  const fname = `${T("x_fname")}-${todayStr()}.json`;
   const file = new File([new Blob([payload], {type:"application/json"})], fname, {type:"application/json"});
   if(navigator.canShare && navigator.canShare({files:[file]})){
     navigator.share({files:[file], title:fname}).catch(()=>{});
@@ -1387,13 +1690,13 @@ document.getElementById("x-file").addEventListener("change", async e => {
   if(!f) return;
   try{
     const data = JSON.parse(await f.text());
-    if(data.type !== "dailylog-exchange" || !Array.isArray(data.entries)) throw new Error("교환일기 파일이 아니에요");
+    if(data.type !== "dailylog-exchange" || !Array.isArray(data.entries)) throw new Error(T("err_x_file"));
     await importPhotoMap(data.photos);
     const added = mergeExchange(data.entries);
     save(); renderExchangeList();
-    toast(added ? `일기 ${added}편이 도착했어요 💌` : "새로운 일기가 없었어요");
+    toast(added ? TF("toast_x_received", {n: added}) : T("toast_x_none"));
   }catch(err){
-    alert("가져오기 실패: " + err.message);
+    alert(T("err_import") + err.message);
   }
   e.target.value = "";
 });
@@ -1403,11 +1706,8 @@ document.getElementById("f-date").value = todayStr();
 document.getElementById("d-date").value = todayStr();
 document.getElementById("x-date").value = todayStr();
 document.getElementById("x-author").value = localStorage.getItem(X_NAME_KEY) || "";
-renderKindChips(); applyKindForm(); renderStars();
-renderFilterChips(); renderRecordList();
-loadDiaryForm(); renderDiaryList();
-showExchangeTab(); renderExchangeList();
-renderThemeRow(); syncThemeColorMeta();
+renderStars(); loadDiaryForm(); showExchangeTab(); syncThemeColorMeta();
+applyLang();  // 모든 문구·칩·목록을 현재 언어로 렌더링
 
 if("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")){
   navigator.serviceWorker.register("sw.js").catch(()=>{});
