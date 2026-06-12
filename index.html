@@ -256,6 +256,10 @@ section.on{display:block}
       <label>오늘의 교환일기</label>
       <textarea id="x-content" style="min-height:140px"
         placeholder="친구에게 들려주고 싶은 오늘 이야기"></textarea>
+      <label>사진 (선택)</label>
+      <div class="photo-row" id="x-photos"></div>
+      <button class="btn secondary small" id="x-photo-btn">사진 추가</button>
+      <input type="file" id="x-photo-input" accept="image/*" multiple style="display:none">
       <button class="btn" id="x-save">저장</button>
       <button class="btn secondary small" id="x-share">📡 에어드랍으로 보내기</button>
       <button class="btn secondary small" id="x-import">받은 교환일기 가져오기</button>
@@ -318,7 +322,7 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v30</div>
+  <div class="caption" style="text-align:center">앱 버전 v31</div>
 </div>
 
 <div class="lightbox" id="lightbox"><img alt=""></div>
@@ -855,6 +859,7 @@ document.querySelectorAll("nav button").forEach(btn => {
 
 const recPhotos = photoPicker("f-photos", "f-photo-btn", "f-photo-input");
 const diaryPhotos = photoPicker("d-photos", "d-photo-btn", "d-photo-input");
+const xPhotos = photoPicker("x-photos", "x-photo-btn", "x-photo-input");
 
 /* 사진 크게 보기 */
 document.addEventListener("click", e => {
@@ -1180,6 +1185,7 @@ document.getElementById("exp-btn").addEventListener("click", async () => {
   const ids = new Set();
   DB.records.forEach(r => (r.photos || []).forEach(i => ids.add(i)));
   Object.values(DB.diary).forEach(d => (d.photos || []).forEach(i => ids.add(i)));
+  DB.exchange.forEach(x => (x.photos || []).forEach(i => ids.add(i)));
   const photos = {};
   for(const id of ids){
     const b = await imgGet(id);
@@ -1206,6 +1212,7 @@ document.getElementById("imp-file").addEventListener("change", async e => {
     const data = JSON.parse(await f.text());
     if(data.type === "dailylog-exchange" && Array.isArray(data.entries)){
       // 교환일기 파일을 설정의 가져오기로 골라도 알아서 합쳐준다
+      await importPhotoMap(data.photos);
       const added = mergeExchange(data.entries);
       save(); renderExchangeList(); closeSheet();
       toast(added ? `교환일기 ${added}편이 도착했어요 💌` : "새로운 교환일기가 없었어요");
@@ -1296,16 +1303,30 @@ function renderExchangeList(){
     s.textContent = `${en.date || "?"} · ${en.author || "이름 없음"}`;
     const b = document.createElement("div"); b.className = "diary-body";
     const txt = document.createElement("div"); txt.textContent = en.content || "";
+    b.appendChild(txt);
+    if(en.photos && en.photos.length){
+      const ph = document.createElement("div"); ph.className = "rec-photos";
+      ph.innerHTML = en.photos.map(id => `<img data-pid="${esc(id)}" alt="">`).join("");
+      b.appendChild(ph);
+    }
     const del = document.createElement("button");
     del.textContent = "삭제";
     del.style.cssText = "margin-top:10px;background:none;border:none;color:var(--danger);font-size:13px;font-weight:600;padding:0";
     del.addEventListener("click", () => {
       if(!confirm("이 일기를 삭제할까요?")) return;
+      imgDel(en.photos || []);
       DB.exchange = DB.exchange.filter(x => x.id !== en.id);
       save(); renderExchangeList();
     });
-    b.appendChild(txt); b.appendChild(del);
+    b.appendChild(del);
     d.appendChild(s); d.appendChild(b); wrap.appendChild(d);
+  }
+  hydratePhotos(wrap);
+}
+/* 받은 파일에 담겨 온 사진(dataURL)을 사진 저장소에 넣는다 */
+async function importPhotoMap(photos){
+  for(const [pid, durl] of Object.entries(photos || {})){
+    await imgPut(pid, dataURLToBlob(durl));
   }
 }
 function mergeExchange(entries){
@@ -1318,27 +1339,38 @@ function mergeExchange(entries){
   }
   return added;
 }
-document.getElementById("x-save").addEventListener("click", () => {
+document.getElementById("x-save").addEventListener("click", async () => {
   const author = document.getElementById("x-author").value.trim();
   const content = document.getElementById("x-content").value.trim();
   if(!content){ alert("내용을 입력해 주세요."); return; }
   if(author) localStorage.setItem(X_NAME_KEY, author);
+  const photoIds = await xPhotos.commit();
   DB.exchange.push({
     id: newXId(),
     author: author || "이름 없음",
     date: document.getElementById("x-date").value || todayStr(),
     content,
+    photos: photoIds,
     createdAt: Date.now(),
   });
   save();
   document.getElementById("x-content").value = "";
+  xPhotos.reset([]);
   renderExchangeList();
   toast("교환일기를 저장했어요 ✉️");
 });
-document.getElementById("x-share").addEventListener("click", () => {
+document.getElementById("x-share").addEventListener("click", async () => {
   if(!DB.exchange.length){ alert("보낼 일기가 없어요. 먼저 한 편 써보세요!"); return; }
+  // 사진도 dataURL로 담아서 함께 보낸다
+  const photos = {};
+  for(const en of DB.exchange){
+    for(const pid of en.photos || []){
+      const b = await imgGet(pid);
+      if(b) photos[pid] = await blobToDataURL(b);
+    }
+  }
   const payload = JSON.stringify({type:"dailylog-exchange", version:1,
-    exportedAt:new Date().toISOString(), entries:DB.exchange}, null, 2);
+    exportedAt:new Date().toISOString(), entries:DB.exchange, photos}, null, 2);
   const fname = `교환일기-${todayStr()}.json`;
   const file = new File([new Blob([payload], {type:"application/json"})], fname, {type:"application/json"});
   if(navigator.canShare && navigator.canShare({files:[file]})){
@@ -1356,6 +1388,7 @@ document.getElementById("x-file").addEventListener("change", async e => {
   try{
     const data = JSON.parse(await f.text());
     if(data.type !== "dailylog-exchange" || !Array.isArray(data.entries)) throw new Error("교환일기 파일이 아니에요");
+    await importPhotoMap(data.photos);
     const added = mergeExchange(data.entries);
     save(); renderExchangeList();
     toast(added ? `일기 ${added}편이 도착했어요 💌` : "새로운 일기가 없었어요");
