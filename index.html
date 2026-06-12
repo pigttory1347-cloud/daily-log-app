@@ -10,7 +10,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="일상 기록">
-<meta name="theme-color" content="#DCE9E1">
+<meta name="theme-color" content="#ffffff">
 <style>
 /* ---- 테마: 기본 = 세이지 (저채도 그린) ---- */
 :root{
@@ -19,12 +19,6 @@
   --danger:#D99287; --star:#EDB868; --star-off:#DFE8E2;
   --btn-bg:#7FA98E; --btn-text:#ffffff;
   --shadow:0 3px 10px rgba(60,80,70,.08);
-  /* 하단 여백: 기본은 safe area 그대로, 단독실행에서는 env()가 0으로 깨지는
-     경우가 있어 홈 인디케이터 높이(34pt)를 최소값으로 보장 */
-  --bot:env(safe-area-inset-bottom, 0px);
-}
-@media all and (display-mode: standalone){
-  :root{ --bot:max(env(safe-area-inset-bottom, 0px), 34px) }
 }
 html[data-theme=lavender]{ --bg:#E4E1F0; --accent:#9189BB; --btn-bg:#9189BB;
   --line:#E7E4F2; --chip:#EEECF6; --field:#F7F6FB; --star-off:#E3E0EE;
@@ -46,15 +40,13 @@ html,body{margin:0; padding:0; overflow:hidden;
   font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
   font-size:16px; -webkit-text-size-adjust:100%}
 /* 고정 레이아웃: 페이지는 안 움직이고 main 내부만 스크롤 → iOS 키보드 밀림 방지 */
-/* iOS 단독실행(viewport-fit=cover+black-translucent)에서 height:100%와 inset:0은
-   하단 safe area를 뺀 뷰포트 기준이라 데드존이 생기고(WebKit 254868/237961),
-   100vh는 반대로 safe area를 이중으로 더해 화면보다 커져 하단이 잘림(v22에서 확인).
-   → JS가 실제 화면 높이(screen.height)를 --apph로 넣어주고 그걸 쓴다.
-   배경색 마스킹(html/body = --bg)은 안 먹는 iOS 버전 대비 안전망으로 유지 */
+/* iOS 단독실행 한계(v22~v24 실측): 웹 렌더링은 뷰포트(innerHeight)까지만 합성되고
+   그 아래 ~59pt 띠는 iOS가 body 배경색으로만 칠한다. 어떤 CSS/JS로도 그 띠에는
+   그림을 못 그림. → 탭바를 바닥에 도킹하고 body 배경 = 카드색(흰색)으로 두면
+   iOS가 칠하는 띠가 탭바·시트의 연장으로 보여 이음새가 사라진다 */
 html{height:100%; background:var(--bg)}
-body{position:fixed; top:0; left:0; width:100vw; height:100vh;
-  height:var(--apph, 100vh);
-  display:flex; flex-direction:column; background:var(--bg)}
+body{position:fixed; inset:0; display:flex; flex-direction:column;
+  background:var(--card)}
 header{flex:none; background:var(--bg);
   padding:calc(12px + env(safe-area-inset-top)) 18px 10px;
   display:flex; align-items:center; justify-content:space-between}
@@ -118,12 +110,14 @@ textarea{min-height:90px; resize:vertical}
 .diary-item .diary-body{background:var(--card); border-top:1.5px dashed var(--line);
   border-radius:0 0 16px 16px; padding:13px 16px; white-space:pre-wrap; font-size:15px;
   box-shadow:var(--shadow)}
-/* 플로팅 알약 탭바 */
+/* 도킹 탭바: 뷰포트 바닥까지 붙이고, 그 아래 iOS가 칠하는 띠(body 배경=카드색)가
+   탭바의 연장으로 보이게 한다. safe area에서 띠 높이(--dead)만큼 빼서 이중 여백 방지 */
 nav{flex:none; display:flex; gap:4px; background:var(--card);
-  border-radius:999px; border:1px solid var(--line);
-  box-shadow:0 4px 14px rgba(47,90,70,.14);
-  margin:8px 16px calc(12px + var(--bot));
-  padding:6px 8px; z-index:20}
+  border-radius:20px 20px 0 0;
+  box-shadow:0 -4px 14px rgba(47,90,70,.10);
+  margin:0;
+  padding:8px 14px calc(8px + max(0px, env(safe-area-inset-bottom) - var(--dead, 0px)));
+  z-index:20}
 nav button{flex:1; background:none; border:none; padding:7px 0 5px; color:var(--sub);
   font-size:11px; font-weight:600; display:flex; flex-direction:column; align-items:center;
   gap:2px; border-radius:999px}
@@ -152,7 +146,7 @@ body.kb nav{display:none}
 .sheet-bg.show{display:block}
 .sheet{position:fixed; left:0; right:0; bottom:0; background:var(--card); z-index:31;
   border-radius:22px 22px 0 0;
-  padding:20px 18px calc(20px + var(--bot));
+  padding:20px 18px calc(20px + max(0px, env(safe-area-inset-bottom) - var(--dead, 0px)));
   transform:translateY(100%); transition:transform .25s; max-height:80vh; overflow-y:auto}
 .sheet.show{transform:translateY(0)}
 .sheet h2{margin:0 0 4px; font-size:18px}
@@ -295,7 +289,7 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v24</div>
+  <div class="caption" style="text-align:center">앱 버전 v25</div>
 </div>
 
 <div class="lightbox" id="lightbox"><img alt=""></div>
@@ -504,9 +498,9 @@ const THEMES = [
 const THEME_KEY = "dailylog_theme";
 
 function syncThemeColorMeta(){
-  // 죽은 영역(탭바 아래)이 이 색으로 칠해질 수 있음 — 플로팅 탭바라 배경색으로 통일
-  const bg = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim();
-  document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.content = bg);
+  // 죽은 영역(탭바 아래)은 body 배경색으로 칠해짐 — 도킹 탭바와 같은 카드색으로 통일
+  const card = getComputedStyle(document.documentElement).getPropertyValue("--card").trim();
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.content = card);
 }
 function applyTheme(name){
   if(name === "sage") delete document.documentElement.dataset.theme;
@@ -533,23 +527,20 @@ function renderThemeRow(){
   if(saved && saved !== "sage") document.documentElement.dataset.theme = saved;
 }
 
-/* ===================== iOS 화면 높이(--apph) / 죽은 영역(--dead) 측정 ===================== */
-/* 단독실행 iOS에서는 100%·inset:0은 짧고 100vh는 길게 계산되는 버그가 있어,
-   실제 화면 높이(screen 기준)를 --apph로 직접 넣어 body 높이로 쓴다.
-   --dead = 화면 높이 - 뷰포트(innerHeight) 차이. 탭바/시트를 그만큼 띄우는 데 사용.
+/* ===================== iOS 죽은 영역(--dead) 측정 ===================== */
+/* 단독실행 iOS에서 화면(screen 높이)보다 뷰포트(innerHeight)가 짧으면 그 차이.
+   이 띠는 웹이 못 그리는 영역(body 배경색으로만 칠해짐)이라, 탭바/시트의
+   safe-area 여백에서 이 값을 빼서 이중 여백을 막는다.
    콜드 스타트 직후 뷰포트 값이 늦게 잡히는 버그 대비, 크기 변화 때마다 재측정 */
 function _setDead(){
-  let dead = 0, apph = "";
+  let dead = 0;
   if(navigator.standalone && screen){
     // iOS의 screen.width/height는 회전과 무관하게 세로 기준 고정값
     const land = matchMedia("(orientation: landscape)").matches;
     const sh = land ? Math.min(screen.width, screen.height) : Math.max(screen.width, screen.height);
     dead = Math.max(0, Math.min(100, sh - window.innerHeight));
-    apph = sh + "px";
   }
   document.documentElement.style.setProperty("--dead", dead + "px");
-  if(apph) document.documentElement.style.setProperty("--apph", apph);
-  else document.documentElement.style.removeProperty("--apph");
 }
 _setDead();
 window.addEventListener("orientationchange", () => setTimeout(_setDead, 300));
