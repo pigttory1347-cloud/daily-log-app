@@ -245,6 +245,26 @@ section.on{display:block}
     <div id="diary-list"></div>
   </section>
 
+  <!-- ===================== 교환일기 (이스터 에그) ===================== -->
+  <section id="sec-exchange">
+    <div class="card">
+      <div class="caption" style="margin:0 4px 8px">🤫 비밀의 교환일기장이에요. 일기를 쓰고 에어드랍으로 주고받아 보세요.</div>
+      <label>내 이름</label>
+      <input type="text" id="x-author" maxlength="12" placeholder="예: 거북이">
+      <label>날짜</label>
+      <input type="date" id="x-date">
+      <label>오늘의 교환일기</label>
+      <textarea id="x-content" style="min-height:140px"
+        placeholder="친구에게 들려주고 싶은 오늘 이야기"></textarea>
+      <button class="btn" id="x-save">저장</button>
+      <button class="btn secondary small" id="x-share">📡 에어드랍으로 보내기</button>
+      <button class="btn secondary small" id="x-import">받은 교환일기 가져오기</button>
+      <input type="file" id="x-file" accept=".json,application/json" style="display:none">
+    </div>
+    <h3>주고받은 일기</h3>
+    <div id="x-list"></div>
+  </section>
+
   <!-- ===================== 검색 ===================== -->
   <section id="sec-search">
     <div class="card">
@@ -270,6 +290,11 @@ section.on{display:block}
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
     검색
   </button>
+  <!-- 이스터 에그: 풋터를 5번 연속 탭하면 열림 -->
+  <button data-tab="exchange" id="tab-exchange" style="display:none">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m2 7 10 7L22 7"/></svg>
+    교환
+  </button>
 </nav>
 
 <footer id="app-footer">🐢 오늘도 차곡차곡</footer>
@@ -293,7 +318,7 @@ section.on{display:block}
     모든 데이터는 이 아이폰 안에만 저장돼요. 폰을 바꾸거나 앱을 지우면 사라지니
     가끔 "내보내기"로 백업해 두세요. 맥 앱의 기록도 JSON으로 가져올 수 있어요.
   </div>
-  <div class="caption" style="text-align:center">앱 버전 v28</div>
+  <div class="caption" style="text-align:center">앱 버전 v29</div>
 </div>
 
 <div class="lightbox" id="lightbox"><img alt=""></div>
@@ -306,9 +331,12 @@ const LS_KEY = "dailylog_v1";
 function load(){
   try{
     const d = JSON.parse(localStorage.getItem(LS_KEY));
-    if(d && Array.isArray(d.records) && typeof d.diary === "object") return d;
+    if(d && Array.isArray(d.records) && typeof d.diary === "object"){
+      if(!Array.isArray(d.exchange)) d.exchange = [];
+      return d;
+    }
   }catch(e){}
-  return {records:[], diary:{}};
+  return {records:[], diary:{}, exchange:[]};
 }
 let DB = load();
 function save(){ localStorage.setItem(LS_KEY, JSON.stringify(DB)); }
@@ -526,6 +554,16 @@ async function tryFetchPageMeta(url){
       || (doc.querySelector("title") ? doc.querySelector("title").textContent.trim() : "");
     return {thumb: thumb || null, title: title || null};
   }catch(e){ return null; }
+}
+/* 이미지가 실제로 로드되는지 확인 — 안 뜨는 주소는 썸네일로 안 쓴다 */
+function _imgLoads(src){
+  return new Promise(res => {
+    const im = new Image();
+    const t = setTimeout(() => res(false), 8000);
+    im.onload = () => { clearTimeout(t); res(im.naturalWidth > 1); };
+    im.onerror = () => { clearTimeout(t); res(false); };
+    im.src = src;
+  });
 }
 
 /* ===================== 테마 ===================== */
@@ -803,7 +841,7 @@ function photoPicker(listId, btnId, inputId){
 }
 
 /* ===================== UI: 탭 ===================== */
-const TITLES = {records:"기록", diary:"일기", search:"검색"};
+const TITLES = {records:"기록", diary:"일기", search:"검색", exchange:"교환일기"};
 document.querySelectorAll("nav button").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b === btn));
@@ -928,16 +966,18 @@ document.getElementById("f-url").addEventListener("input", e => {
     }
     hint.textContent = "대표 이미지 가져오는 중...";
     const meta = await tryFetchPageMeta(url);
-    if(meta && (meta.thumb || meta.title)){
-      urlMeta = {url, thumb: meta.thumb};
+    let thumb = meta && meta.thumb ? meta.thumb : null;
+    if(thumb && !(await _imgLoads(thumb))) thumb = null;
+    if(meta && (thumb || meta.title)){
+      urlMeta = {url, thumb};
       if(meta.title && !document.getElementById("f-title").value)
         document.getElementById("f-title").value = meta.title;
-      hint.textContent = meta.thumb
+      hint.textContent = thumb
         ? "대표 이미지를 찾았어요 — 저장하면 썸네일로 보여요."
-        : "대표 이미지는 없는 페이지예요. 제목만 채웠어요.";
+        : "대표 이미지가 없어 썸네일 없이 저장돼요.";
     }else{
       urlMeta = {url: null, thumb: null};
-      hint.textContent = "페이지 정보를 못 가져왔어요 — 링크는 그대로 저장돼요.";
+      hint.textContent = "페이지 정보를 못 가져왔어요 — 썸네일 없이 링크만 저장돼요.";
     }
   }, 600);
 });
@@ -1000,7 +1040,7 @@ function recordCardHTML(r, deletable){
   const star = r.rating ? ` <span class="rec-star">${STAR(r.rating)}</span>` : "";
   const detail = r.detail ? " " + esc(r.detail) : "";
   const sub = [r.creator, "기록: " + r.date].filter(Boolean).map(esc).join(" · ");
-  const thumb = r.thumbnail ? `<div class="rec-thumb"><img src="${esc(r.thumbnail)}" loading="lazy" alt=""></div>` : "";
+  const thumb = r.thumbnail ? `<div class="rec-thumb"><img src="${esc(r.thumbnail)}" loading="lazy" alt="" onerror="this.closest('.rec-thumb').style.display='none'"></div>` : "";
   const link = r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">열기</a>` : "";
   const edit = deletable ? `<button data-edit="${esc(r.id)}">수정</button>` : "";
   const del = deletable ? `<button class="del" data-del="${esc(r.id)}">삭제</button>` : "";
@@ -1145,7 +1185,7 @@ document.getElementById("exp-btn").addEventListener("click", async () => {
     const b = await imgGet(id);
     if(b) photos[id] = await blobToDataURL(b);
   }
-  const payload = JSON.stringify({version:2, exportedAt:new Date().toISOString(), records:DB.records, diary:DB.diary, photos}, null, 2);
+  const payload = JSON.stringify({version:2, exportedAt:new Date().toISOString(), records:DB.records, diary:DB.diary, exchange:DB.exchange, photos}, null, 2);
   const blob = new Blob([payload], {type:"application/json"});
   const fname = `일상기록-백업-${todayStr()}.json`;
   const file = new File([blob], fname, {type:"application/json"});
@@ -1164,6 +1204,14 @@ document.getElementById("imp-file").addEventListener("change", async e => {
   if(!f) return;
   try{
     const data = JSON.parse(await f.text());
+    if(data.type === "dailylog-exchange" && Array.isArray(data.entries)){
+      // 교환일기 파일을 설정의 가져오기로 골라도 알아서 합쳐준다
+      const added = mergeExchange(data.entries);
+      save(); renderExchangeList(); closeSheet();
+      toast(added ? `교환일기 ${added}편이 도착했어요 💌` : "새로운 교환일기가 없었어요");
+      e.target.value = "";
+      return;
+    }
     if(!Array.isArray(data.records) || typeof data.diary !== "object") throw new Error("형식이 달라요");
     const merge = confirm("확인 = 기존 데이터에 합치기\n취소 = 기존 데이터를 지우고 덮어쓰기");
     if(!merge) await imgClear();
@@ -1186,13 +1234,123 @@ document.getElementById("imp-file").addEventListener("change", async e => {
       for(const [ds, d] of Object.entries(data.diary)){
         if(!DB.diary[ds] || (d.updatedAt||0) > (DB.diary[ds].updatedAt||0)) DB.diary[ds] = d;
       }
+      mergeExchange(data.exchange);
       toast(`기록 ${added}건을 합쳤어요 🐢`);
     }else{
-      DB = {records:data.records, diary:data.diary};
+      DB = {records:data.records, diary:data.diary,
+        exchange: Array.isArray(data.exchange) ? data.exchange : []};
       alert(`기록 ${data.records.length}건, 일기 ${Object.keys(data.diary).length}편으로 교체했어요.`);
     }
-    save(); renderRecordList(); renderDiaryList(); loadDiaryForm();
+    save(); renderRecordList(); renderDiaryList(); loadDiaryForm(); renderExchangeList();
     closeSheet();
+  }catch(err){
+    alert("가져오기 실패: " + err.message);
+  }
+  e.target.value = "";
+});
+
+/* ===================== 교환일기 (이스터 에그) ===================== */
+/* 풋터(탭바 아래 문구)를 5번 연속 탭하면 교환 탭이 열린다 */
+const X_UNLOCK_KEY = "dailylog_exchange_open";
+const X_NAME_KEY = "dailylog_exchange_name";
+function exchangeUnlocked(){ return localStorage.getItem(X_UNLOCK_KEY) === "1"; }
+function showExchangeTab(){
+  document.getElementById("tab-exchange").style.display = exchangeUnlocked() ? "" : "none";
+}
+{
+  let taps = 0, tapTimer = null;
+  document.getElementById("app-footer").addEventListener("click", () => {
+    if(exchangeUnlocked()) return;
+    taps++;
+    clearTimeout(tapTimer);
+    tapTimer = setTimeout(() => { taps = 0; }, 1200);
+    if(taps >= 5){
+      taps = 0;
+      localStorage.setItem(X_UNLOCK_KEY, "1");
+      showExchangeTab();
+      toast("🎁 비밀 교환일기장이 열렸어요!");
+    }
+  });
+}
+function newXId(){ return "x" + Date.now() + "-" + Math.random().toString(36).slice(2, 7); }
+function renderExchangeList(){
+  const wrap = document.getElementById("x-list");
+  wrap.innerHTML = "";
+  const list = DB.exchange.slice().sort((a, b) =>
+    (b.date || "").localeCompare(a.date || "") || (b.createdAt || 0) - (a.createdAt || 0));
+  if(!list.length){
+    wrap.innerHTML = '<div class="empty">아직 주고받은 일기가 없어요.<br>한 편 쓰고 에어드랍으로 보내보세요 ✉️</div>';
+    return;
+  }
+  for(const en of list){
+    const d = document.createElement("details"); d.className = "diary-item";
+    const s = document.createElement("summary");
+    s.textContent = `${en.date || "?"} · ${en.author || "이름 없음"}`;
+    const b = document.createElement("div"); b.className = "diary-body";
+    const txt = document.createElement("div"); txt.textContent = en.content || "";
+    const del = document.createElement("button");
+    del.textContent = "삭제";
+    del.style.cssText = "margin-top:10px;background:none;border:none;color:var(--danger);font-size:13px;font-weight:600;padding:0";
+    del.addEventListener("click", () => {
+      if(!confirm("이 일기를 삭제할까요?")) return;
+      DB.exchange = DB.exchange.filter(x => x.id !== en.id);
+      save(); renderExchangeList();
+    });
+    b.appendChild(txt); b.appendChild(del);
+    d.appendChild(s); d.appendChild(b); wrap.appendChild(d);
+  }
+}
+function mergeExchange(entries){
+  const have = new Set(DB.exchange.map(x => x.id));
+  let added = 0;
+  for(const en of entries || []){
+    if(!en || typeof en.content !== "string") continue;
+    if(!en.id) en.id = newXId();
+    if(!have.has(en.id)){ DB.exchange.push(en); have.add(en.id); added++; }
+  }
+  return added;
+}
+document.getElementById("x-save").addEventListener("click", () => {
+  const author = document.getElementById("x-author").value.trim();
+  const content = document.getElementById("x-content").value.trim();
+  if(!content){ alert("내용을 입력해 주세요."); return; }
+  if(author) localStorage.setItem(X_NAME_KEY, author);
+  DB.exchange.push({
+    id: newXId(),
+    author: author || "이름 없음",
+    date: document.getElementById("x-date").value || todayStr(),
+    content,
+    createdAt: Date.now(),
+  });
+  save();
+  document.getElementById("x-content").value = "";
+  renderExchangeList();
+  toast("교환일기를 저장했어요 ✉️");
+});
+document.getElementById("x-share").addEventListener("click", () => {
+  if(!DB.exchange.length){ alert("보낼 일기가 없어요. 먼저 한 편 써보세요!"); return; }
+  const payload = JSON.stringify({type:"dailylog-exchange", version:1,
+    exportedAt:new Date().toISOString(), entries:DB.exchange}, null, 2);
+  const fname = `교환일기-${todayStr()}.json`;
+  const file = new File([new Blob([payload], {type:"application/json"})], fname, {type:"application/json"});
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    navigator.share({files:[file], title:fname}).catch(()=>{});
+  }else{
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(file); a.download = fname; a.click();
+    URL.revokeObjectURL(a.href);
+  }
+});
+document.getElementById("x-import").addEventListener("click", () => document.getElementById("x-file").click());
+document.getElementById("x-file").addEventListener("change", async e => {
+  const f = e.target.files[0];
+  if(!f) return;
+  try{
+    const data = JSON.parse(await f.text());
+    if(data.type !== "dailylog-exchange" || !Array.isArray(data.entries)) throw new Error("교환일기 파일이 아니에요");
+    const added = mergeExchange(data.entries);
+    save(); renderExchangeList();
+    toast(added ? `일기 ${added}편이 도착했어요 💌` : "새로운 일기가 없었어요");
   }catch(err){
     alert("가져오기 실패: " + err.message);
   }
@@ -1202,9 +1360,12 @@ document.getElementById("imp-file").addEventListener("change", async e => {
 /* ===================== 초기화 ===================== */
 document.getElementById("f-date").value = todayStr();
 document.getElementById("d-date").value = todayStr();
+document.getElementById("x-date").value = todayStr();
+document.getElementById("x-author").value = localStorage.getItem(X_NAME_KEY) || "";
 renderKindChips(); applyKindForm(); renderStars();
 renderFilterChips(); renderRecordList();
 loadDiaryForm(); renderDiaryList();
+showExchangeTab(); renderExchangeList();
 renderThemeRow(); syncThemeColorMeta();
 
 if("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")){
