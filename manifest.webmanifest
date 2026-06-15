@@ -1,6 +1,6 @@
 {
-  "name": "일상 기록",
-  "short_name": "일상 기록",
+  "name": "엉금일기",
+  "short_name": "엉금일기",
   "description": "재밌게 봤고 감명깊었던 것들, 그리고 하루하루",
   "lang": "ko",
   "start_url": "./",
